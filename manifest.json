@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "Timedone Enhancement Suite",
+  "description": "Timedone Enhancement Suite",
+  "version": "0.1.0",
+  "icons": {
+    "64": "icons/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://timedone.golden-dimension.com/*"
+
+      ],
+      "js": [
+        "content-scripts/content_script.js"
+      ],
+      "css": ["content-scripts/content-script.css"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": {
+      "64": "icons/icon.png"
+    },
+    "default_popup": "browser-action/index.html",
+    "default_title": "Timedone Enhancement Suite"
+  },
+  "options_ui": {
+    "page": "options/index.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "tes@seregy77.com"
+    }
+  },
+  "permissions": ["storage"],
+  "web_accessible_resources": ["fonts/*"]
+}
