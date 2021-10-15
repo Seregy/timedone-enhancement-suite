@@ -1,0 +1,17 @@
+{
+  "name": "timedone-enhancement-suite",
+  "version": "0.1.0",
+  "description": "Timedone Enhancement Suite",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "web-ext": "^6.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:firefox": "web-ext run"
+  },
+  "keywords": [],
+  "author": "seregy77",
+  "license": "Apache-2.0"
+}

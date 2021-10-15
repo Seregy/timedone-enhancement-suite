@@ -8,13 +8,8 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://timedone.golden-dimension.com/*"
-
-      ],
-      "js": [
-        "content-scripts/content_script.js"
-      ],
+      "matches": ["*://timedone.golden-dimension.com/*"],
+      "js": ["content-scripts/content-script.js"],
       "css": ["content-scripts/content-script.css"]
     }
   ],
