@@ -1,6 +1,18 @@
 const shortFooterSettings = browser.storage.sync.get("shortFooter");
 shortFooterSettings.then(handleFooterDisplay, onError);
-initToggleStuff();
+initTableObserver();
+
+function initTableObserver() {
+  let observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+    });
+    initToggleStuff();
+  });
+  
+  observer.observe(document.querySelector("mat-table"), {
+    childList: true
+  });
+}
 
 function handleFooterDisplay(footerSettings) {
   if (footerSettings.shortFooter) {
@@ -29,16 +41,13 @@ function handleFooterDisplay(footerSettings) {
 }
 
 function initToggleStuff() {
-  const allRows = document.querySelectorAll("mat-row.groupRow");
+  const allRows = document.querySelectorAll("mat-row.groupRow:not(.tes-row)");
   for (row of allRows) {
     const nextElement = row.nextElementSibling;
-    console.log(nextElement);
     if (nextElement && !nextElement.classList.contains("groupRow")) {
-      console.log("expanded");
-      row.classList.add("tes-row-expanded");
+      row.classList.add("tes-row", "tes-row-expanded");
     } else {
-      console.log("collapsed");
-      row.classList.add("tes-row-collapsed");
+      row.classList.add("tes-row", "tes-row-collapsed");
     }
 
     row.addEventListener('click', toggleRow);
@@ -58,15 +67,12 @@ function toggleExpandIcon() {
 
   if (spanStuff.textContent === "unfold_more") {
     const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
-    console.log("Current - more, collapsed rows - " + collapsedRows.length);
 
     if (collapsedRows.length === 0) {
       spanStuff.textContent = "unfold_less";
     }
   } else if (spanStuff.textContent === "unfold_less") {
     const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
-
-    console.log("Current - less, collapsed rows - " + collapsedRows.length);
 
     if (collapsedRows.length > 0) {
       spanStuff.textContent = "unfold_more";
