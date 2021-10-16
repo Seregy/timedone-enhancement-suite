@@ -24,14 +24,8 @@ function handleFooterDisplay(footerSettings) {
     const headerCell = document.querySelector("#head");
     headerCell.prepend(expandCollapseElement.htmlElement);
 
-    worklogFooter.style.width = "auto";
-    worklogFooter.style.padding = "0";
-    worklogFooter.style.right = "auto";
-
-    const worklogTimeIcon = worklogFooter.querySelector(
-      ".btn__worklog-time > img"
-    );
-    worklogTimeIcon.style.marginLeft = "4rem";
+    console.assert(!worklogFooter.hasAttribute("id"), "Worklog footer already has an ID assigned to it");
+    worklogFooter.id = "tes-worklog-footer";
   }
 }
 
