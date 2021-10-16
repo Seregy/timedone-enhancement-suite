@@ -1,6 +1,9 @@
+import { ExpandCollapseElement } from "./element/expand-collapse";
+
 const shortFooterSettings = browser.storage.sync.get("shortFooter");
 shortFooterSettings.then(handleFooterDisplay, onError);
 initTableObserver();
+const expandCollapseElement = new ExpandCollapseElement(handleSwitchToExpandableState, handleSwitchToCollapsableState);
 
 function initTableObserver() {
   let observer = new MutationObserver((mutations) => {
@@ -8,7 +11,7 @@ function initTableObserver() {
     });
     initToggleStuff();
   });
-  
+
   observer.observe(document.querySelector("mat-table"), {
     childList: true
   });
@@ -19,15 +22,7 @@ function handleFooterDisplay(footerSettings) {
     const worklogFooter = document.querySelector("div.worklog__footer");
 
     const headerCell = document.querySelector("#head");
-    const ceButton = document.createElement("button");
-    ceButton.classList.add("collapse-expand", "btn");
-    ceButton.title = "Розгорнути всі";
-    const span1 = document.createElement("mat-icon");
-    span1.classList.add("material-icons");
-    span1.textContent = "unfold_more";
-    ceButton.appendChild(span1);
-    ceButton.addEventListener('click', toggleExpand);
-    headerCell.prepend(ceButton);
+    headerCell.prepend(expandCollapseElement.htmlElement);
 
     worklogFooter.style.width = "auto";
     worklogFooter.style.padding = "0";
@@ -41,16 +36,17 @@ function handleFooterDisplay(footerSettings) {
 }
 
 function initToggleStuff() {
-  const allRows = document.querySelectorAll("mat-row.groupRow:not(.tes-row)");
-  for (row of allRows) {
-    const nextElement = row.nextElementSibling;
+  const allUnmanagedRows = document.querySelectorAll("mat-row.groupRow:not(.tes-row)");
+  
+  for (const unmanagedRow of allUnmanagedRows) {
+    const nextElement = unmanagedRow.nextElementSibling;
     if (nextElement && !nextElement.classList.contains("groupRow")) {
-      row.classList.add("tes-row", "tes-row-expanded");
+      unmanagedRow.classList.add("tes-row", "tes-row-expanded");
     } else {
-      row.classList.add("tes-row", "tes-row-collapsed");
+      unmanagedRow.classList.add("tes-row", "tes-row-collapsed");
     }
 
-    row.addEventListener('click', toggleRow);
+    unmanagedRow.addEventListener('click', toggleRow);
   }
 }
 
@@ -59,48 +55,40 @@ function toggleRow(event) {
   target.classList.toggle("tes-row-collapsed");
   target.classList.toggle("tes-row-expanded");
 
-  toggleExpandIcon();
+  toggleExpandCollapseElement();
 }
 
-function toggleExpandIcon() {
-  const spanStuff = document.querySelector(".collapse-expand > mat-icon");
+function toggleExpandCollapseElement() {
+  const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
 
-  if (spanStuff.textContent === "unfold_more") {
-    const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
+  if (expandCollapseElement.isExpandable) {
 
     if (collapsedRows.length === 0) {
-      spanStuff.textContent = "unfold_less";
+      expandCollapseElement.makeCollapsable();
     }
-  } else if (spanStuff.textContent === "unfold_less") {
-    const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
 
-    if (collapsedRows.length > 0) {
-      spanStuff.textContent = "unfold_more";
-    }
+    return;
   }
-}
 
-function toggleExpand(event) {
-  const spanStuff = document.querySelector(".collapse-expand > mat-icon");
-
-  if (spanStuff.textContent === "unfold_more") {
-    spanStuff.textContent = "unfold_less";
-
-    const allRows = document.querySelectorAll("mat-row.tes-row-collapsed");
-    for (row of allRows) {
-      row.click();
-    }
-
-  } else {
-    spanStuff.textContent = "unfold_more";
-
-    const allRows = document.querySelectorAll("mat-row.tes-row-expanded");
-    for (row of allRows) {
-      row.click();
-    }
-  }  
+  if (collapsedRows.length > 0) {
+    expandCollapseElement.makeExpandable();
+  }
 }
 
 function onError(error) {
   console.log(`Error: ${error}`);
+}
+
+function handleSwitchToCollapsableState() {
+  const collapsedRows = document.querySelectorAll("mat-row.tes-row-collapsed");
+  for (const row of collapsedRows) {
+    row.click();
+  }
+}
+
+function handleSwitchToExpandableState() {
+  const expandedRows = document.querySelectorAll("mat-row.tes-row-expanded");
+  for (const row of expandedRows) {
+    row.click();
+  }
 }
