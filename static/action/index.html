@@ -3,18 +3,44 @@
 
 <head>
   <meta charset="UTF-8">
-  <link href="style.css" rel="stylesheet" />
+  <link type="text/css" rel="stylesheet" href="style.css" media="screen,projection" />
 </head>
 
 <body>
 
-  <form>
-    <label>Short footer <input type="checkbox" id="short-footer"></label>
-    <button type="submit">Save</button>
-  </form>
+  <div>
+    <div class="mdc-form-field">
+      <div class="mdc-checkbox">
+        <input type="checkbox" class="mdc-checkbox__native-control" id="no-footer-background" />
+        <div class="mdc-checkbox__background">
+          <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+          </svg>
+          <div class="mdc-checkbox__mixedmark"></div>
+        </div>
+        <div class="mdc-checkbox__ripple"></div>
+      </div>
+      <label for="no-footer-background">Disable background for worklog footer</label>
+    </div>
+  </div>
+
+  <div>
+    <div class="mdc-form-field">
+      <div class="mdc-checkbox">
+        <input type="checkbox" class="mdc-checkbox__native-control" id="expand-all-button" />
+        <div class="mdc-checkbox__background">
+          <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+          </svg>
+          <div class="mdc-checkbox__mixedmark"></div>
+        </div>
+        <div class="mdc-checkbox__ripple"></div>
+      </div>
+      <label for="expand-all-button">Enable expand all button</label>
+    </div>
+  </div>
 
   <script src="index.js"></script>
-
 </body>
 
 </html>

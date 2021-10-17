@@ -1,42 +1,62 @@
 import { ExpandCollapseElement } from "./element/expand-collapse";
 
-init();
+const EXPAND_COLLAPSE_ELEMENT = new ExpandCollapseElement(handleSwitchToExpandableState, handleSwitchToCollapsableState);
+const MUTATION_OBSERVER = new MutationObserver((mutations) => {
+  initToggleStuff(EXPAND_COLLAPSE_ELEMENT);
+});
 
-function init() {
-  const shortFooterSettings = browser.storage.sync.get("shortFooter");
-  shortFooterSettings.then(handleFooterDisplay, onError);
-
-  handleExpandCollapseDisplay({expandAll: true});
+function applySettings() {
+  const featureSettings = browser.storage.sync.get();
+  featureSettings.then(settings => {
+    handleFooterDisplay(settings);
+    handleExpandCollapseDisplay(settings);
+  }, onError);
 }
 
-function handleFooterDisplay(footerSettings) {
-  if (footerSettings.shortFooter) {
+function handleSettingsChanged(changes, areaName) {
+  if (areaName === "sync") {
+    applySettings();
+  }
+}
+
+function handleFooterDisplay(featureSettings) {
+  console.log(featureSettings);
+  if (featureSettings.noFooterBackground) {
     const worklogFooter = document.querySelector("div.worklog__footer");
 
     console.assert(!worklogFooter.hasAttribute("id"), "Worklog footer already has an ID assigned to it");
     worklogFooter.id = "tes-worklog-footer";
+    return;
+  }
+
+  const tesWorklogFooter = document.querySelector("#tes-worklog-footer");
+  if (tesWorklogFooter) {
+    tesWorklogFooter.removeAttribute("id");
   }
 }
 
-function handleExpandCollapseDisplay(expandCollapseSettings) {
-  if (expandCollapseSettings.expandAll) {
-    const expandCollapseElement = new ExpandCollapseElement(handleSwitchToExpandableState, handleSwitchToCollapsableState);
+function handleExpandCollapseDisplay(featureSettings) {
+  if (featureSettings.expandAllButton) {
 
     const headerCell = document.querySelector("#head");
-    headerCell.prepend(expandCollapseElement.htmlElement);
+    headerCell.prepend(EXPAND_COLLAPSE_ELEMENT.htmlElement);
 
-    initTableObserver(expandCollapseElement);
+    initTableObserver(EXPAND_COLLAPSE_ELEMENT);
+    return;
   }
+
+  const headerCell = document.querySelector("#head");
+  if (headerCell.contains(EXPAND_COLLAPSE_ELEMENT.htmlElement)) {
+    headerCell.removeChild(EXPAND_COLLAPSE_ELEMENT.htmlElement);
+  }
+  const allManagedRows = document.querySelectorAll(".tes-row");
+  allManagedRows.forEach(managedRow => managedRow.classList.remove("tes-row", "tes-row-expanded", "tes-row-collapsed"));
+  MUTATION_OBSERVER.disconnect();
 }
 
 function initTableObserver(expandCollapseElement) {
-  let observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-    });
-    initToggleStuff(expandCollapseElement);
-  });
-
-  observer.observe(document.querySelector("mat-table"), {
+  initToggleStuff(expandCollapseElement);
+  MUTATION_OBSERVER.observe(document.querySelector("mat-table"), {
     childList: true
   });
 }
@@ -58,6 +78,11 @@ function initToggleStuff(expandCollapseElement) {
 
 function toggleRow(event, expandCollapseElement) {
   const target = event.target.closest(".tes-row-collapsed, .tes-row-expanded");
+
+  if (target == null) {
+    return;
+  }
+
   target.classList.toggle("tes-row-collapsed");
   target.classList.toggle("tes-row-expanded");
 
@@ -98,3 +123,6 @@ function handleSwitchToExpandableState() {
     row.click();
   }
 }
+
+applySettings();
+browser.storage.onChanged.addListener(handleSettingsChanged);

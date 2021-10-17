@@ -9,7 +9,7 @@ module.exports = {
   devtool: "cheap-source-map",
   entry: {
     content: `./${SOURCE_DIRECTORY_NAME}/content-scripts/content-script.js`,
-    action: `./${SOURCE_DIRECTORY_NAME}/browser-action/script.js`,
+    action: `./${SOURCE_DIRECTORY_NAME}/browser-action/action.js`,
     options: `./${SOURCE_DIRECTORY_NAME}/options/script.js`
   },
   output: {
@@ -43,7 +43,9 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: `${STATIC_CONTENT_DIRECTORY_NAME}`, to: "."}
+        { from: `${STATIC_CONTENT_DIRECTORY_NAME}`, to: "."},
+        { from: "./node_modules/@material/checkbox/dist/mdc.checkbox.min.css", to: "action"},
+        { from: "./node_modules/@material/form-field/dist/mdc.form-field.min.css", to: "action"},
       ],
     }),
   ],

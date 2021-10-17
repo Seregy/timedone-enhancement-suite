@@ -1,3 +1,6 @@
-h1 {
-  font-style: italic;
+@import "mdc.checkbox.min.css";
+@import "mdc.form-field.min.css";
+
+body {
+  background: #fafafa;
 }
