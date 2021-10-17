@@ -11,7 +11,6 @@ module.exports = {
   entry: {
     content: `./${SOURCE_DIRECTORY_NAME}/content-scripts/content-script.js`,
     action: `./${SOURCE_DIRECTORY_NAME}/browser-action/action.js`,
-    options: `./${SOURCE_DIRECTORY_NAME}/options/script.js`
   },
   output: {
     path: path.resolve(__dirname, BUILD_DIRECTORY_NAME),

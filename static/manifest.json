@@ -20,9 +20,6 @@
     "default_popup": "action/index.html",
     "default_title": "Timedone Enhancement Suite"
   },
-  "options_ui": {
-    "page": "options/index.html"
-  },
   "browser_specific_settings": {
     "gecko": {
       "id": "tes@seregy77.com",
