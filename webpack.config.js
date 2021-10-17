@@ -1,5 +1,6 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const SOURCE_DIRECTORY_NAME = 'src';
 const STATIC_CONTENT_DIRECTORY_NAME = 'static';
@@ -48,5 +49,6 @@ module.exports = {
         { from: "./node_modules/@material/form-field/dist/mdc.form-field.min.css", to: "action"},
       ],
     }),
+    new ESLintPlugin(),
   ],
 };
