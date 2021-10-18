@@ -44,10 +44,10 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {from: `${STATIC_CONTENT_DIRECTORY_NAME}`, to: '.'},
-        {from: './node_modules/@material/checkbox/dist/mdc.checkbox.min.css',
+        {from: './node_modules/@material/checkbox/dist/mdc.checkbox.css',
           to: 'action'},
         {from:
-          './node_modules/@material/form-field/dist/mdc.form-field.min.css',
+          './node_modules/@material/form-field/dist/mdc.form-field.css',
         to: 'action'},
       ],
     }),

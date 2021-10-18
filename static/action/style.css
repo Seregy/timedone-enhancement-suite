@@ -1,5 +1,5 @@
-@import "mdc.checkbox.min.css";
-@import "mdc.form-field.min.css";
+@import "mdc.checkbox.css";
+@import "mdc.form-field.css";
 
 body {
   background: #fafafa;
