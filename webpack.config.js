@@ -8,6 +8,7 @@ const BUILD_DIRECTORY_NAME = 'dist';
 
 module.exports = {
   devtool: 'cheap-source-map',
+  mode: 'production',
   entry: {
     content: `./${SOURCE_DIRECTORY_NAME}/content-scripts/content-script.js`,
     action: `./${SOURCE_DIRECTORY_NAME}/browser-action/action.js`,
@@ -39,6 +40,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
+  },
+  performance: {
+    maxAssetSize: 500000,
   },
   plugins: [
     new CopyPlugin({
