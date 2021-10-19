@@ -12,10 +12,10 @@ export class ExpandCollapseElement {
 
   /**
    * Constructs new expand instance of expand-collapse element
-   * @param {makeExpandable} onExpandableState callback to execute on
-   * element's state change to expandable
-   * @param {makeCollapsable} onCollapsableState callback to execute on
-   * element's state change to collapsable
+   * @param {ExpandCollapseElement~onExpandableState} onExpandableState
+   * callback to execute on element's state change to expandable
+   * @param {ExpandCollapseElement~onCollapsableState} onCollapsableState
+   * callback to execute on element's state change to collapsable
    */
   constructor(onExpandableState, onCollapsableState) {
     this.#iconHtmlElement = this.#buildIconElement();
@@ -62,10 +62,10 @@ export class ExpandCollapseElement {
    *
    * @param {HTMLElement} iconElement icon html element to be included
    * into the button
-   * @param {makeExpandable} onExpandableState callback to execute on
-   * element's state change to expandable
-   * @param {makeCollapsable} onCollapsableState callback to execute on
-   * element's state change to collapsable
+   * @param {ExpandCollapseElement~onExpandableState} onExpandableState
+   * callback to execute on  element's state change to expandable
+   * @param {ExpandCollapseElement~onCollapsableState} onCollapsableState
+   * callback to execute on element's state change to collapsable
    * @return {HTMLElement} button html element
    */
   #buildButtonElement(iconElement, onExpandableState, onCollapsableState) {
@@ -93,10 +93,10 @@ export class ExpandCollapseElement {
   /**
    * Toggles the current state of the element
    *
-   * @param {makeExpandable} onExpandableState callback to execute on
-   * element's state change to expandable
-   * @param {makeCollapsable} onCollapsableState callback to execute on
-   * element's state change to collapsable
+   * @param {ExpandCollapseElement~onExpandableState} onExpandableState
+   * callback to execute on element's state change to expandable
+   * @param {ExpandCollapseElement~onCollapsableState} onCollapsableState
+   * callback to execute on element's state change to collapsable
    */
   #toggleState(onExpandableState, onCollapsableState) {
     if (this.isExpandable) {
