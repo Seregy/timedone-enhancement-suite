@@ -64,6 +64,10 @@ async function handleFooterDisplay(featureSettings) {
  * @param {string} newId id to assign to the element
  */
 function assignElementId(element, newId) {
+  if (element.id === newId) {
+    return;
+  }
+
   console.assert(!element.hasAttribute('id'),
       `Element has an ID assigned to it: ${element.id}`);
   element.id = newId;
@@ -192,7 +196,8 @@ function handleRowToggle(expandCollapseElement) {
  * @param {*} error error to be handled
  */
 function onStorageError(error) {
-  console.log(`Error: ${error}`);
+  console.error(`Encountered an error on retrieving settings from the
+   storage: ${error}`);
 }
 
 /**
