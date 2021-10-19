@@ -35,20 +35,38 @@ function handleSettingsChanged(changes, areaName) {
  *
  * @param {FeatureSettings} featureSettings current feature settings
  */
-function handleFooterDisplay(featureSettings) {
-  if (featureSettings.noFooterBackground) {
-    const worklogFooter = document.querySelector('div.worklog__footer');
+async function handleFooterDisplay(featureSettings) {
+  let footer;
+  try {
+    footer = await resolveElement(() =>
+      document.querySelector('div.worklog__footer'));
+  } catch (error) {
+    console.error(`Encountered an error on applying no footer background
+       settings: %o`, error);
+  }
 
-    console.assert(!worklogFooter.hasAttribute('id'),
-        'Worklog footer already has an ID assigned to it');
-    worklogFooter.id = 'tes-worklog-footer';
+  if (!footer) {
     return;
   }
 
-  const tesWorklogFooter = document.querySelector('#tes-worklog-footer');
-  if (tesWorklogFooter) {
-    tesWorklogFooter.removeAttribute('id');
+  if (featureSettings.noFooterBackground) {
+    assignElementId(footer, 'tes-worklog-footer');
+    return;
   }
+
+  footer.removeAttribute('id');
+}
+
+/**
+ * Assigns ID to the existing element
+ *
+ * @param {HTMLElement} element html element to assign the ID to
+ * @param {string} newId id to assign to the element
+ */
+function assignElementId(element, newId) {
+  console.assert(!element.hasAttribute('id'),
+      `Element has an ID assigned to it: ${element.id}`);
+  element.id = newId;
 }
 
 /**
@@ -56,16 +74,26 @@ function handleFooterDisplay(featureSettings) {
  *
  * @param {FeatureSettings} featureSettings current feature settings
  */
-function handleExpandCollapseDisplay(featureSettings) {
+async function handleExpandCollapseDisplay(featureSettings) {
+  let headerCell;
+  try {
+    headerCell = await resolveElement(() => document.querySelector('#head'));
+  } catch (error) {
+    console.error(`Encountered an error on applying expand-collapse settings:
+     %o`, error);
+  }
+
+  if (!headerCell) {
+    return;
+  }
+
   if (featureSettings.expandAllButton) {
-    const headerCell = document.querySelector('#head');
     headerCell.prepend(EXPAND_COLLAPSE_ELEMENT.htmlElement);
 
     initTableObserver(EXPAND_COLLAPSE_ELEMENT);
     return;
   }
 
-  const headerCell = document.querySelector('#head');
   if (headerCell.contains(EXPAND_COLLAPSE_ELEMENT.htmlElement)) {
     headerCell.removeChild(EXPAND_COLLAPSE_ELEMENT.htmlElement);
   }
@@ -185,6 +213,41 @@ function handleSwitchToExpandableState() {
   for (const row of expandedRows) {
     row.click();
   }
+}
+
+/**
+ * Function that returns html element or null if it's not available
+ *
+ * @callback elementSupplier
+ */
+
+/**
+ * Resolves html element on the page
+ *
+ * Handles the cases when the element can't be retrieved right away
+ *
+ * @param {elementSupplier} elementSupplier provider of the html element to
+ * resolve
+ * @return {Promise} promise for the html element
+ */
+function resolveElement(elementSupplier) {
+  return new Promise((resolve) => {
+    const element = elementSupplier();
+
+    if (element) {
+      return resolve(element);
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      const element = elementSupplier();
+      if (element) {
+        resolve(element);
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document, {childList: true, subtree: true});
+  });
 }
 
 applySettings();
