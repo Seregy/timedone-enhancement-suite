@@ -5,7 +5,7 @@ on:
       - v*
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
     steps:
       - id: extract-version
@@ -28,12 +28,16 @@ jobs:
         with:
           version: ${{ steps.extract-version.outputs.VERSION }}
 
+      - name: Package the extension
+        run: npm run package
+        shell: bash
+
       - id: sign-extension
         name: Sign the extension
         uses: kewisch/action-web-ext@v1
         with:
           cmd: sign
-          source: dist
+          source: artifacts/timedone_enhancement_suite-${{ steps.extract-version.outputs.VERSION }}.zip
           channel: unlisted
           apiKey: ${{ secrets.AMO_API_KEY }}
           apiSecret: ${{ secrets.AMO_API_SECRET }}
