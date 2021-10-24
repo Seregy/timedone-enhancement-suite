@@ -24,7 +24,7 @@
   "scripts": {
     "build": "webpack",
     "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest",
-    "lint": "web-ext lint --source-dir dist",
+    "lint": "web-ext lint --source-dir dist --self-hosted",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:firefox": "web-ext run --source-dir dist"
   },
