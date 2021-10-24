@@ -2,7 +2,9 @@
   "addons": {
     "tes@seregy77.com": {
       "updates": [
-        
+        {
+          "version": "0.1.0"
+        }
       ]
     }
   }
