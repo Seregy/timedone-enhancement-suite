@@ -1,0 +1,47 @@
+name: Build, sign and release extension
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: extract-version
+        name: Extract the version from the tag
+        run: >
+          echo "::set-output name=VERSION::${GITHUB_REF#refs\/tags\/v}"
+        env:
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Build the extension
+        uses: ./.github/actions/build-extension
+        with:
+          version: ${{ steps.extract-version.outputs.VERSION }}
+
+      - id: sign-extension
+        name: Sign the extension
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: sign
+          source: dist
+          channel: unlisted
+          apiKey: ${{ secrets.AMO_API_KEY }}
+          apiSecret: ${{ secrets.AMO_API_SECRET }}
+          timeout: 900000
+      
+      - name: Create new release
+        uses: softprops/action-gh-release@v0.1.13
+        with:
+          draft: true
+          files: ${{ steps.sign-extension.outputs.target }}
+          name: Release v${{ steps.extract-version.outputs.VERSION }}

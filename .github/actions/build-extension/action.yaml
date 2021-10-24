@@ -1,0 +1,27 @@
+name: Build the extension
+inputs:
+  version:
+    description: Project version to set
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set a version for the project if needed
+      run: |
+        if [ -n "${{ inputs.version }}" ]; then
+          npm version --allow-same-version --no-commit-hooks --no-git-tag-version ${{ inputs.version }};
+        fi
+      shell: bash
+
+    - name: Install npm dependencies
+      run: npm ci
+      shell: bash
+
+    - name: Build the extension
+      run: npm run build
+      shell: bash
+
+    - name: Lint the extension
+      run: npm run lint
+      shell: bash
