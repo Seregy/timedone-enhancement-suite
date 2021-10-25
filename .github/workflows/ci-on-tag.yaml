@@ -6,12 +6,12 @@ on:
 
 jobs:
   build-release:
+    name: Build and sign the extension, create new release
     runs-on: ubuntu-latest
     steps:
       - id: extract-version
         name: Extract the version from the tag
-        run: >
-          echo "::set-output name=VERSION::${GITHUB_REF#refs\/tags\/v}"
+        run: echo "::set-output name=VERSION::${GITHUB_REF#refs\/tags\/v}"
         env:
           GITHUB_REF: ${{ github.ref }}
 
@@ -28,24 +28,16 @@ jobs:
         with:
           version: ${{ steps.extract-version.outputs.VERSION }}
 
-      - name: Package the extension
-        run: npm run package
+      - name: Sign the extension
+        run: npm run sign:amo
         shell: bash
-
-      - id: sign-extension
-        name: Sign the extension
-        uses: kewisch/action-web-ext@v1
-        with:
-          cmd: sign
-          source: artifacts/timedone_enhancement_suite-${{ steps.extract-version.outputs.VERSION }}.zip
-          channel: unlisted
-          apiKey: ${{ secrets.AMO_API_KEY }}
-          apiSecret: ${{ secrets.AMO_API_SECRET }}
-          timeout: 900000
+        env:
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
       
       - name: Create new release
         uses: softprops/action-gh-release@v0.1.13
         with:
           draft: true
-          files: ${{ steps.sign-extension.outputs.target }}
+          files: "*/*.xpi"
           name: Release v${{ steps.extract-version.outputs.VERSION }}
