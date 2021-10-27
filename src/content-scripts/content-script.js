@@ -1,4 +1,4 @@
-import {ExpandCollapseElement} from './element/expand-collapse';
+import {ExpandCollapseElement} from './element/expand-collapse.js';
 
 const EXPAND_COLLAPSE_ELEMENT =
   new ExpandCollapseElement(handleSwitchToExpandableState,
