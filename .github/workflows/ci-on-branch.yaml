@@ -1,6 +1,7 @@
 name: Build and lint
 on:
-  push
+  push:
+    branches: '**'
 
 jobs:
   build-lint:
