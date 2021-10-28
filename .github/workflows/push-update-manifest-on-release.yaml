@@ -41,7 +41,7 @@ jobs:
         env:
           ASSET_URL: ${{ steps.jq-stuff.outputs.value }}
 
-      - name: Create or Update Pull Request
+      - name: Create a pull request with the changes to the update manifest
         uses: gr2m/create-or-update-pull-request-action@v1.3.0
         with:
           title: Add update entry for \"${TAG_NAME#v}\"
@@ -52,7 +52,8 @@ jobs:
           branch: feature/add-update-manifest-entry-$TAG_NAME
           author: pull-request-github-action[bot] pull-request-github-action[bot]@users.noreply.github.com>
           commit-message: Add update entry for \"${TAG_NAME#v}\"
-          path: pages
+          path: pages/
           labels: update manifest
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ toJson(github.event.release.tag_name) }}
