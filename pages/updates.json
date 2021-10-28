@@ -4,6 +4,16 @@
       "updates": [
         {
           "version": "0.1.0"
+        },
+        {
+          "version": "0.2.5",
+          "update_link": "https://github.com/Seregy/timedone-enhancement-suite/releases/download/v0.2.5/timedone_enhancement_suite-0.2.5-an%2Bfx.xpi",
+          "update_hash": "sha512:9057e1e4e0aec770ff538f292d9be895150991c346904e7a70989318f374517b5ab6d0af41507f52a25d6b55887986a9576bcad36732b627e93e317a25fc6e6c",
+          "browser_specific_settings": {
+            "gecko": {
+              "strict_min_version": "78.0"
+            }
+          }
         }
       ]
     }
