@@ -1,0 +1,58 @@
+name: Push new version to the update manifest
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  push-update-manifest:
+    name: Push new version of the extension to the update manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Extract xpi asset link from the event payload
+        id: jq-stuff
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: 'jq ".release.assets | map(select(.name? | test(\".*xpi\")))[0].browser_download_url" -r <<< "$EVENT_PAYLOAD_JSON"'
+        env:
+          EVENT_PAYLOAD_JSON: ${{ toJson(github.event) }}
+
+      - name: Download the extension file
+        uses: wei/wget@v1
+        with:
+          args: -O extension.xpi "$ASSET_URL"
+        env:
+          ASSET_URL: ${{ steps.jq-stuff.outputs.value }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Generate new update manifest
+        run: >
+          node script/update.js --updateLink "$ASSET_URL" --extensionFilePath "extension.xpi" --existingUpdateManifest "pages/updates.json" --newUpdateManifestPath "pages/updates.json"
+        env:
+          ASSET_URL: ${{ steps.jq-stuff.outputs.value }}
+
+      - name: Commit update manifest with new version
+        run: |
+          git config --global user.name 'commit-github-actions[bot]'
+          git config --global user.email 'commit-github-actions[bot]@users.noreply.github.com'
+          git add pages
+          git commit -m "Add update entry for \"${TAG_NAME#v}\""
+          git push
+        env:
+          TAG_NAME: ${{ toJson(github.event.release.tag_name) }}
+
+      - name: Deploy pages after update manifest change
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: pages
+          folder: pages
