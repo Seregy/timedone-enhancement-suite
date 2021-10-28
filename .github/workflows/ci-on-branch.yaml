@@ -1,0 +1,19 @@
+name: Build and lint
+on:
+  push
+
+jobs:
+  build-lint:
+    name: Build and lint the extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Build the extension
+        uses: ./.github/actions/build-extension
