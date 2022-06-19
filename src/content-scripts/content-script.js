@@ -1,4 +1,5 @@
 import {ExpandCollapseElement} from './element/expand-collapse.js';
+import {handleProjectAutoselectFix} from './project-autoselect.js';
 
 const EXPAND_COLLAPSE_ELEMENT =
   new ExpandCollapseElement(handleSwitchToExpandableState,
@@ -15,6 +16,7 @@ function applySettings() {
   featureSettings.then((settings) => {
     handleFooterDisplay(settings);
     handleExpandCollapseDisplay(settings);
+    handleProjectAutoselectFix(settings);
   }, onStorageError);
 }
 

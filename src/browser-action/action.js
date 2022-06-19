@@ -5,8 +5,8 @@
  * removing the footer's background is enabled
  * @property {boolean} expandAllButton indicates whether the feature for
  * adding the button for expanding all worklog rows is enabled
- * @property {boolean} shortFooter deprecated alias for
- * {@link FeatureSettings#noFooterBackground}
+ * @property {boolean} fixProjectAutoselect indicates whether the fix for
+ * autoselecting last project when adding new worklog entry is enabled
  */
 
 /**
@@ -20,11 +20,15 @@ function loadSettings() {
    */
   function applyCurrentValues(currentSettings) {
     const noFooterBackgroundEnabled = currentSettings.noFooterBackground ||
-      currentSettings.shortFooter || false;
+      false;
     getNoFooterBackgroundCheckbox().checked = noFooterBackgroundEnabled;
 
     const expandAllButtonEnabled = currentSettings.expandAllButton || false;
     getExpandAllButtonCheckbox().checked = expandAllButtonEnabled;
+
+    const fixProjectAutoselectEnabled = currentSettings.fixProjectAutoselect ||
+      false;
+    getFixProjectAutoselectCheckbox().checked = fixProjectAutoselectEnabled;
   }
 
   /**
@@ -46,11 +50,12 @@ function saveSettings() {
   browser.storage.sync.set({
     noFooterBackground: getNoFooterBackgroundCheckbox().checked,
     expandAllButton: getExpandAllButtonCheckbox().checked,
+    fixProjectAutoselect: getFixProjectAutoselectCheckbox().checked,
   });
 }
 
 /**
- * Gets checkbox element for "no footer background" option
+ * Gets checkbox element for the "no footer background" option
  * @return {HTMLElement} checkbox html element
  */
 function getNoFooterBackgroundCheckbox() {
@@ -58,11 +63,19 @@ function getNoFooterBackgroundCheckbox() {
 }
 
 /**
- * Gets checkbox element for "expand all button" option
+ * Gets checkbox element for the "expand all button" option
  * @return {HTMLElement} checkbox html element
  */
 function getExpandAllButtonCheckbox() {
   return document.querySelector('#expand-all-button');
+}
+
+/**
+ * Gets checkbox element for the "fix the autoselection of the project" option
+ * @return {HTMLElement} checkbox html element
+ */
+function getFixProjectAutoselectCheckbox() {
+  return document.querySelector('#fix-project-autoselect');
 }
 
 /**
@@ -71,6 +84,7 @@ function getExpandAllButtonCheckbox() {
 function initEventListeners() {
   getNoFooterBackgroundCheckbox().addEventListener('change', saveSettings);
   getExpandAllButtonCheckbox().addEventListener('change', saveSettings);
+  getFixProjectAutoselectCheckbox().addEventListener('change', saveSettings);
 
   document.addEventListener('DOMContentLoaded', loadSettings);
 }
