@@ -1,5 +1,7 @@
 import {ExpandCollapseElement} from './element/expand-collapse.js';
 import {handleProjectAutoselectFix} from './project-autoselect.js';
+import UIkit from 'uikit';
+import Icons from 'uikit/dist/js/uikit-icons.js';
 
 const EXPAND_COLLAPSE_ELEMENT =
   new ExpandCollapseElement(handleSwitchToExpandableState,
@@ -259,3 +261,4 @@ function resolveElement(elementSupplier) {
 
 applySettings();
 browser.storage.onChanged.addListener(handleSettingsChanged);
+UIkit.use(Icons);

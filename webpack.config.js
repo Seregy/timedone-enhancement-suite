@@ -74,13 +74,13 @@ const plugins = [
         },
       },
       {
-        from: './node_modules/@material/checkbox/dist/mdc.checkbox.css',
+        from: 'node_modules/uikit/dist/css/uikit.min.css',
         to: 'action',
       },
       {
-        from: './node_modules/@material/form-field/dist/mdc.form-field.css',
-        to: 'action',
-      },
+        from: 'node_modules/uikit/dist/css/uikit.min.css',
+        to: 'content',
+      }
     ],
   }),
   new ESLintPlugin(),

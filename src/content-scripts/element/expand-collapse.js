@@ -1,6 +1,8 @@
-const EXPAND_COLLAPSE_STATE = Object.freeze({
-  EXPANDABLE: 'unfold_more',
-  COLLAPSABLE: 'unfold_less',
+import UIkit from 'uikit';
+
+const EXPAND_COLLAPSE_ICON_NAME = Object.freeze({
+  EXPANDABLE: 'expand',
+  COLLAPSABLE: 'shrink',
 });
 
 /**
@@ -9,6 +11,7 @@ const EXPAND_COLLAPSE_STATE = Object.freeze({
 export class ExpandCollapseElement {
   #buttonHtmlElement;
   #iconHtmlElement;
+  #expandable = true;
 
   /**
    * Constructs new expand instance of expand-collapse element
@@ -30,22 +33,23 @@ export class ExpandCollapseElement {
    * @return {boolean} true if element is expandable, false otherwise
    */
   get isExpandable() {
-    return this.#iconHtmlElement.textContent ===
-      EXPAND_COLLAPSE_STATE.EXPANDABLE;
+    return this.#expandable;
   }
 
   /**
    * Manually switches the element into expandable state
    */
   makeExpandable() {
-    this.#iconHtmlElement.textContent = EXPAND_COLLAPSE_STATE.EXPANDABLE;
+    this.#setIcon(this.#iconHtmlElement, EXPAND_COLLAPSE_ICON_NAME.EXPANDABLE);
+    this.#expandable = true;
   }
 
   /**
    * Manually switches the element into collapsable state
    */
   makeCollapsable() {
-    this.#iconHtmlElement.textContent = EXPAND_COLLAPSE_STATE.COLLAPSABLE;
+    this.#setIcon(this.#iconHtmlElement, EXPAND_COLLAPSE_ICON_NAME.COLLAPSABLE);
+    this.#expandable = false;
   }
 
   /**
@@ -84,9 +88,9 @@ export class ExpandCollapseElement {
    * @return {HTMLElement} icon html element
    */
   #buildIconElement() {
-    const iconElement = document.createElement('mat-icon');
-    iconElement.classList.add('material-icons');
-    iconElement.textContent = 'unfold_more';
+    const iconElement = document.createElement('span');
+    this.#setIcon(iconElement, EXPAND_COLLAPSE_ICON_NAME.EXPANDABLE);
+
     return iconElement;
   }
 
@@ -107,6 +111,16 @@ export class ExpandCollapseElement {
 
     this.makeExpandable();
     onExpandableState();
+  }
+
+  /**
+   * Sets new icon for the icon element
+   *
+   * @param {*} iconHtmlElement icon HTML element
+   * @param {*} iconNameToSet new icon name to use
+   */
+  #setIcon(iconHtmlElement, iconNameToSet) {
+    UIkit.icon(iconHtmlElement, {icon: iconNameToSet});
   }
 
   /**

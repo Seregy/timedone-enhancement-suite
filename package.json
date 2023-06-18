@@ -5,8 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@material/checkbox": "^13.0.0",
-    "@material/form-field": "^13.0.0"
+    "uikit": "^3.16.21"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
