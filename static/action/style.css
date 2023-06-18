@@ -1,5 +1,4 @@
-@import "mdc.checkbox.css";
-@import "mdc.form-field.css";
+@import "uikit.min.css";
 
 body {
   background: #fafafa;
