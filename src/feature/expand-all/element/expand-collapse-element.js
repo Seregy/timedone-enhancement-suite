@@ -74,7 +74,7 @@ export class ExpandCollapseElement {
    */
   #buildButtonElement(iconElement, onExpandableState, onCollapsableState) {
     const buttonElement = document.createElement('button');
-    buttonElement.classList.add('collapse-expand', 'btn');
+    buttonElement.classList.add('tes-collapse-expand', 'btn');
     buttonElement.title = 'Розгорнути всі';
     buttonElement.appendChild(iconElement);
     buttonElement.addEventListener('click',
@@ -126,7 +126,7 @@ export class ExpandCollapseElement {
   /**
    * Callback to be executed after switching the element to expandable state
    *
-   * Won't me executed if the state of the element was changed manually
+   * Won't be executed if the state of the element was changed manually
    * via {@link makeExpandable}
    *
    * @callback ExpandCollapseElement~onExpandableState
@@ -135,9 +135,9 @@ export class ExpandCollapseElement {
   /**
    * Callback to be executed after switching the element to collapsable state
    *
-   * Won't me executed if the state of the element was changed manually
+   * Won't be executed if the state of the element was changed manually
    * via {@link makeCollapsable}
    *
    * @callback ExpandCollapseElement~onCollapsableState
-   */
+  */
 }

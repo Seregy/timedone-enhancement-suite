@@ -3,6 +3,7 @@ import {fileURLToPath} from 'url';
 import CopyPlugin from 'copy-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
 import {readFileSync} from 'fs';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const SOURCE_DIRECTORY_NAME = 'src';
 const STATIC_CONTENT_DIRECTORY_NAME = 'static';
@@ -42,6 +43,10 @@ const module = {
         ],
       },
     },
+    {
+      test: /\.css$/,
+      use: [MiniCssExtractPlugin.loader, 'css-loader'],
+    },
   ],
 };
 
@@ -80,10 +85,13 @@ const plugins = [
       {
         from: 'node_modules/uikit/dist/css/uikit.min.css',
         to: 'content',
-      }
+      },
     ],
   }),
   new ESLintPlugin(),
+  new MiniCssExtractPlugin({
+    filename: '[name]/[name].css',
+  }),
 ];
 
 export default {
