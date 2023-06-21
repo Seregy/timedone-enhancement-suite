@@ -1,3 +1,5 @@
+import htmlHelper from '../../helper/html-helper.js';
+
 const PROJECT_SELECT_ELEMENT_SELECTOR = 'app-manage-worklog select#projectId';
 const FIRST_PROJECT_SELECT_OPTION_ELEMENT_SELECTOR =
   'app-manage-worklog select#projectId option';
@@ -5,27 +7,52 @@ const MUTATION_OBSERVER = new MutationObserver((mutations) => {
   tryAutoselectProjectIfNoneSelected();
 });
 
-/**
- * Handles the autoselection of the project based on the feature settings
- *
- * @param {FeatureSettings} featureSettings current feature settings
- */
-async function handleProjectAutoselectFix(featureSettings) {
-  if (featureSettings.fixProjectAutoselect) {
-    initProjectAutoselectObserver();
-    return;
-  }
+let initialized = false;
 
-  MUTATION_OBSERVER.disconnect();
+/**
+ * Returns a unique feature identifier
+ * @return {string} feature ID
+ */
+function getId() {
+  return 'project-autoselect-bugfix';
 }
 
 /**
- * Initiates a mutation observer for the project autoselection
+ * Returns a feature description
+ *
+ * @return {string} feature description
  */
-function initProjectAutoselectObserver() {
+function getDescription() {
+  return 'Fix the autoselection of the project';
+}
+
+/**
+ * Returns whether the feature has been initialized
+ *
+ * @return {boolean} feature initilization status
+ */
+function isInitialized() {
+  return initialized;
+}
+
+/**
+ * Initializes and enables the feature
+ */
+async function initialize() {
   MUTATION_OBSERVER.observe(document.querySelector('body'), {
     childList: true,
   });
+
+  initialized = true;
+}
+
+/**
+ * Deregisters and disables the feature
+ */
+async function deregister() {
+  MUTATION_OBSERVER.disconnect();
+
+  initialized = false;
 }
 
 /**
@@ -34,7 +61,7 @@ function initProjectAutoselectObserver() {
 async function tryAutoselectProjectIfNoneSelected() {
   let projectSelectElement;
   try {
-    projectSelectElement = await resolveElement(() =>
+    projectSelectElement = await htmlHelper.resolveElement(() =>
       document.querySelector(PROJECT_SELECT_ELEMENT_SELECTOR));
   } catch (error) {
     console.error(`Encountered an error on autoselecting a project when
@@ -44,7 +71,6 @@ async function tryAutoselectProjectIfNoneSelected() {
   if (!projectSelectElement) {
     return;
   }
-
 
   const firstProjectOptionElement =
    await resolveFirstProjectSelectOptionElement();
@@ -64,7 +90,7 @@ async function tryAutoselectProjectIfNoneSelected() {
  *  element for the project selection
  */
 async function resolveFirstProjectSelectOptionElement() {
-  return resolveElement(() =>
+  return htmlHelper.resolveElement(() =>
     document.querySelector(FIRST_PROJECT_SELECT_OPTION_ELEMENT_SELECTOR));
 }
 
@@ -121,33 +147,4 @@ function selectProjectOption(projectSelectElement, projectValueToSelect) {
   projectSelectElement.dispatchEvent(new Event('change'));
 }
 
-/**
- * Resolves html element on the page
- *
- * Handles the cases when the element can't be retrieved right away
- *
- * @param {elementSupplier} elementSupplier provider of the html element to
- * resolve
- * @return {Promise} promise for the html element
- */
-function resolveElement(elementSupplier) {
-  return new Promise((resolve) => {
-    const element = elementSupplier();
-
-    if (element) {
-      return resolve(element);
-    }
-
-    const observer = new MutationObserver((mutations) => {
-      const element = elementSupplier();
-      if (element) {
-        resolve(element);
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document, {childList: true, subtree: true});
-  });
-}
-
-export {handleProjectAutoselectFix};
+export default {getId, getDescription, isInitialized, initialize, deregister};
