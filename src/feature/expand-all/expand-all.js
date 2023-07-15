@@ -1,5 +1,6 @@
 import {ExpandCollapseElement} from './element/expand-collapse-element.js';
 import htmlHelper from '../../helper/html-helper.js';
+import extensionLogger from '../../helper/extension-logger.js';
 import './expand-all.css';
 
 const EXPAND_COLLAPSE_ELEMENT =
@@ -87,7 +88,8 @@ async function resolveHeaderCell() {
     return await htmlHelper.resolveElement(() =>
       document.querySelector('#head'));
   } catch (error) {
-    console.error(`Encountered an error on resolving header cell: %o`, error);
+    extensionLogger
+        .info(`Encountered an error on resolving header cell: %o`, error);
   }
 }
 
