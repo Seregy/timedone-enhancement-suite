@@ -1,4 +1,5 @@
 import htmlHelper from '../../helper/html-helper.js';
+import extensionLogger from '../../helper/extension-logger.js';
 
 const PROJECT_SELECT_ELEMENT_SELECTOR = 'app-manage-worklog select#projectId';
 const FIRST_PROJECT_SELECT_OPTION_ELEMENT_SELECTOR =
@@ -64,7 +65,7 @@ async function tryAutoselectProjectIfNoneSelected() {
     projectSelectElement = await htmlHelper.resolveElement(() =>
       document.querySelector(PROJECT_SELECT_ELEMENT_SELECTOR));
   } catch (error) {
-    console.error(`Encountered an error on autoselecting a project when
+    extensionLogger.info(`Encountered an error on autoselecting a project when
      resolving selection element: %o`, error);
   }
 

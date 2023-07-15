@@ -1,4 +1,6 @@
 import htmlHelper from '../../helper/html-helper.js';
+import extensionLogger from '../../helper/extension-logger.js';
+
 import './footer-background-fix.css';
 
 let initialized = false;
@@ -62,7 +64,7 @@ async function resolveFooterElement() {
     return await htmlHelper.resolveElement(() =>
       document.querySelector('div.worklog__footer'));
   } catch (error) {
-    console.error(`Encountered an error on resolving footer element: %o`,
+    extensionLogger.info(`Encountered an error on resolving footer element: %o`,
         error);
   }
 }
