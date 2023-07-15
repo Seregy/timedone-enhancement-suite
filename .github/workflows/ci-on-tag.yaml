@@ -36,8 +36,9 @@ jobs:
           AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
       
       - name: Create new release
-        uses: softprops/action-gh-release@v0.1
+        uses: softprops/action-gh-release@v0.1.15
         with:
           draft: true
           files: "*/*.xpi"
           name: Release v${{ steps.extract-version.outputs.VERSION }}
+          generate_release_notes: true
