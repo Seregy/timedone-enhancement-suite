@@ -41,3 +41,4 @@ jobs:
           draft: true
           files: "*/*.xpi"
           name: Release v${{ steps.extract-version.outputs.VERSION }}
+          generate_release_notes: true
