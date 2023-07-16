@@ -11,7 +11,7 @@ jobs:
     steps:
       - id: extract-version
         name: Extract the version from the tag
-        run: echo "::set-output name=VERSION::${GITHUB_REF#refs\/tags\/v}"
+        run: echo "VERSION=${GITHUB_REF#refs\/tags\/v}" >> $GITHUB_OUTPUT
         env:
           GITHUB_REF: ${{ github.ref }}
 
