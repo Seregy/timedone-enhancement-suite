@@ -1,7 +1,13 @@
 import featureLoader from '../feature/feature-loader.js';
 
+const requiredPermissions = {
+  origins: ['*://timedone.golden-dimension.com/*'],
+};
+
+let permissionsGranted;
+
 /**
- * @typedef {import('./../feature/feature.js').Feature} Feature
+ * @typedef {import('../feature/feature.js').Feature} Feature
  */
 
 /**
@@ -34,6 +40,14 @@ function loadSettings() {
 
   const currentSettings = browser.storage.sync.get();
   currentSettings.then(applyCurrentValues, onStorageError);
+}
+
+/**
+ * Handles the change in feature's enable/disable status
+ */
+function handleFeatureStateChange() {
+  requestMissingPermissions();
+  saveSettings();
 }
 
 /**
@@ -80,7 +94,7 @@ function buildFeatureBlock(feature) {
   checkbox.classList.add('uk-checkbox');
   const featureId = feature.getId();
   checkbox.id = featureId;
-  checkbox.addEventListener('change', saveSettings);
+  checkbox.addEventListener('change', handleFeatureStateChange);
   container.appendChild(checkbox);
 
   const label = document.createElement('label');
@@ -90,6 +104,15 @@ function buildFeatureBlock(feature) {
   container.appendChild(label);
 
   return container;
+}
+
+/**
+ * Requests permissions necessary for the extension if needed
+ */
+async function requestMissingPermissions() {
+  if (!permissionsGranted) {
+    permissionsGranted = await browser.permissions.request(requiredPermissions);
+  }
 }
 
 initEventListeners();
