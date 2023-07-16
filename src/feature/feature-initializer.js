@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import featureLoader from './feature-loader.js';
 
 /**

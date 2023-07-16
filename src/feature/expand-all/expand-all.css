@@ -1,8 +1,8 @@
-.tes-collapse-expand {
+#head .tes-collapse-expand {
   color: #fff;
   margin-right: 2rem;
 }
 
-.tes-collapse-expand:hover {
+#head .tes-collapse-expand:hover {
   color: #fff;
 }

@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 const FEATURE_DATA_PREFIX = 'data';
 const GLOBAL_DATA_PREFIX = 'global';
 const KEY_DELIMITER = '.';
