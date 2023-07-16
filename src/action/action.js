@@ -1,4 +1,5 @@
 import featureLoader from '../feature/feature-loader.js';
+import browser from 'webextension-polyfill';
 
 const requiredPermissions = {
   origins: ['*://timedone.golden-dimension.com/*'],
@@ -87,7 +88,7 @@ function initEventListeners() {
  */
 function buildFeatureBlock(feature) {
   const container = document.createElement('div');
-  container.classList.add('uk-margin-small');
+  container.classList.add('uk-margin-small', 'uk-flex', 'uk-flex-middle');
 
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');

@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import featureInitializer from '../feature/feature-initializer.js';
 import UIkit from 'uikit';
 import Icons from 'uikit/dist/js/uikit-icons.js';
