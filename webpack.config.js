@@ -16,7 +16,7 @@ const devtool = 'cheap-source-map';
 const mode = 'production';
 const entry = {
   content: `./${SOURCE_DIRECTORY_NAME}/content-scripts/content-script.js`,
-  action: `./${SOURCE_DIRECTORY_NAME}/browser-action/action.js`,
+  action: `./${SOURCE_DIRECTORY_NAME}/action/action.js`,
 };
 const baseDirPath = _dirname(fileURLToPath(import.meta.url));
 const output = {
@@ -36,7 +36,7 @@ const module = {
             '@babel/preset-env',
             {
               targets: {
-                firefox: '78.0',
+                firefox: '109.0',
               },
             },
           ],
