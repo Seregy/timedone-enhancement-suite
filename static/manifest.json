@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Timedone Enhancement Suite",
-  "description": "Timedone Enhancement Suite",
+  "description": "Adjusts and extends the Timedone interface with additional features",
   "version": "${version}",
   "content_scripts": [
     {
@@ -21,8 +21,14 @@
       "update_url": "https://seregy.github.io/timedone-enhancement-suite/updates.json"
     }
   },
+  "minimum_chrome_version": "88",
   "permissions": ["storage"],
   "host_permissions": [
     "*://timedone.golden-dimension.com/*"
-  ]
+  ],
+  "icons": {
+    "48": "icon/icon-48.png",
+    "96": "icon/icon-96.png",
+    "128": "icon/icon-128-padding.png"
+  }
 }
