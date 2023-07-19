@@ -5,8 +5,8 @@ on:
       - published
 
 jobs:
-  push-update-manifest:
-    name: Push new version of the extension to the update manifest
+  push-update-manifest-firefox:
+    name: Push new version of the extension to the update manifest for the Firefox
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,3 +61,35 @@ jobs:
           labels: update manifest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  push-chrome-web-store:
+    name: Push new version of the extension to the Chrome Web Store
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Extract a zip asset link from the event payload
+        id: jq-stuff
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: 'jq ".release.assets | map(select(.name? | test(\".*zip\")))[0].browser_download_url" -r <<< "$EVENT_PAYLOAD_JSON"'
+        env:
+          EVENT_PAYLOAD_JSON: ${{ toJson(github.event) }}
+
+      - name: Download the extension file
+        uses: wei/wget@v1
+        with:
+          args: -O extension.zip "$ASSET_URL"
+        env:
+          ASSET_URL: ${{ steps.jq-stuff.outputs.value }}
+
+      - name: Upload & release
+        uses: mnao305/chrome-extension-upload@v4.0.1
+        with:
+          file-path: extension.zip
+          extension-id: ${{ secrets.CWS_EXTENSION_ID }}
+          client-id: ${{ secrets.CWS_CLIENT_ID }}
+          client-secret: ${{ secrets.CWS_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CWS_REFRESH_TOKEN }}
+          publish: false

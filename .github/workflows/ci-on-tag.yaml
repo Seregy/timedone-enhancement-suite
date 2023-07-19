@@ -28,7 +28,11 @@ jobs:
         with:
           version: ${{ steps.extract-version.outputs.VERSION }}
 
-      - name: Sign the extension
+      - name: Package the extension for the Chrome
+        run: npm run package
+        shell: bash
+
+      - name: Sign the extension for the Firefox
         run: npm run sign:amo
         shell: bash
         env:
@@ -39,6 +43,8 @@ jobs:
         uses: softprops/action-gh-release@v0.1.15
         with:
           draft: true
-          files: "*/*.xpi"
+          files: |
+            artifacts/*.xpi
+            artifacts/*.zip
           name: Release v${{ steps.extract-version.outputs.VERSION }}
           generate_release_notes: true
