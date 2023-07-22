@@ -1,9 +1,0 @@
-#tes-worklog-footer {
-  pointer-events: none;
-  background: none;
-  border: none;
-}
-
-#tes-worklog-footer .btn__worklog-time {
-  pointer-events: auto;
-}
