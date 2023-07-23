@@ -44,6 +44,16 @@
               "strict_min_version": "109.0"
             }
           }
+        },
+        {
+          "version": "0.4.2",
+          "update_link": "https://github.com/Seregy/timedone-enhancement-suite/releases/download/v0.4.2/timedone_enhancement_suite-0.4.2.xpi",
+          "update_hash": "sha512:268cfae001cef44a02725119f47eb291ca1761d1ea472aed91eeb9a12bd7044b6b74dd76d68ae04ef99b4a9cca3272b48b698d2d6096b199d0effb40b67eb456",
+          "browser_specific_settings": {
+            "gecko": {
+              "strict_min_version": "109.0"
+            }
+          }
         }
       ]
     }
