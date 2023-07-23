@@ -36,5 +36,5 @@ Extends the original projects time summary modal window. Shows individual log en
 
 Provided regular expression must contain exactly one capturing group, which will be used to extract the grouping key. All log entries sharing the same extracted value will be placed in one group. If a log entry doesn't match the provided regex, it will be placed in the default group. If no regular expression is provided, all log entries will be placed in the default group.
 
-Specifying the group key extraction pattern allows to group multiple entries by a [common prefix](docs/assets/projects-time/group-prefix.png?raw=1), [suffix](docs/assets/projects-time/group-suffix.png?raw=1) or just by [full text match](docs/assets/projects-time/group-full-match.png?raw=1).
+Specifying the group key extraction pattern allows to group multiple entries by a [common keyword](docs/assets/projects-time/group-keyword.png?raw=1), [suffix](docs/assets/projects-time/group-suffix.png?raw=1) or just by [full text match](docs/assets/projects-time/group-full-match.png?raw=1).
 Extraction patterns are specified and stored separately for each individual project.
