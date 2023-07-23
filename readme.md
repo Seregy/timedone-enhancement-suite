@@ -18,11 +18,11 @@ Extension will be available in the Chrome Web Store.
 
 ### Expand all button
 
-Adds a new [expand/collapse all button](docs/assets/expand-collapse.png) that opens or closes all day entries on the page in one click.
+Adds a new [expand/collapse all button](docs/assets/expand-collapse.png?raw=1) that opens or closes all day entries on the page in one click.
 
 ### Footer display fix
 
-Adjusts the way the footer element is [displayed on the page](docs/assets/footer.png) by removing its background and preventing it from overlapping the last entry on the page.
+Adjusts the way the footer element is [displayed on the page](docs/assets/footer.png?raw=1) by removing its background and preventing it from overlapping the last entry on the page.
 
 ### Project autoselect bugfix
 
@@ -36,5 +36,5 @@ Extends the original projects time summary modal window. Shows individual log en
 
 Provided regular expression must contain exactly one capturing group, which will be used to extract the grouping key. All log entries sharing the same extracted value will be placed in one group. If a log entry doesn't match the provided regex, it will be placed in the default group. If no regular expression is provided, all log entries will be placed in the default group.
 
-Specifying the group key extraction pattern allows to group multiple entries by a [common prefix](docs/assets/projects-time/group-prefix.png), [suffix](docs/assets/projects-time/group-suffix.png) or just by [full text match](docs/assets/projects-time/group-full-match.png).
+Specifying the group key extraction pattern allows to group multiple entries by a [common prefix](docs/assets/projects-time/group-prefix.png?raw=1), [suffix](docs/assets/projects-time/group-suffix.png?raw=1) or just by [full text match](docs/assets/projects-time/group-full-match.png?raw=1).
 Extraction patterns are specified and stored separately for each individual project.
