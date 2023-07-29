@@ -24,7 +24,8 @@ function getId() {
  * @return {string} feature description
  */
 function getDescription() {
-  return 'Fix the autoselection of the project';
+  return 'Fixes the bug with the "Add new entry" modal window not ' +
+    'selecting the last used project by default';
 }
 
 /**

@@ -88,21 +88,28 @@ function initEventListeners() {
  */
 function buildFeatureBlock(feature) {
   const container = document.createElement('div');
-  container.classList.add('uk-margin-small', 'uk-flex', 'uk-flex-middle');
+  container.classList.add('uk-flex', 'uk-flex-left', 'uk-margin-bottom');
 
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  checkbox.classList.add('uk-checkbox');
+  checkbox.classList.add('uk-checkbox', 'uk-margin-small-top', 'uk-flex-none');
   const featureId = feature.getId();
   checkbox.id = featureId;
   checkbox.addEventListener('change', handleFeatureStateChange);
   container.appendChild(checkbox);
 
+  const featureDescriptionContainer = document.createElement('div');
+  featureDescriptionContainer.classList.add('uk-margin-left');
   const label = document.createElement('label');
-  label.classList.add('uk-form-label', 'uk-margin-small-left');
+  label.classList.add('uk-form-label', 'uk-text-emphasis');
   label.setAttribute('for', featureId);
-  label.textContent = feature.getDescription();
-  container.appendChild(label);
+  label.textContent = feature.getId();
+  featureDescriptionContainer.appendChild(label);
+  const featureDescription = document.createElement('p');
+  featureDescription.classList.add('uk-margin-small');
+  featureDescription.textContent = feature.getDescription();
+  featureDescriptionContainer.appendChild(featureDescription);
+  container.appendChild(featureDescriptionContainer);
 
   return container;
 }

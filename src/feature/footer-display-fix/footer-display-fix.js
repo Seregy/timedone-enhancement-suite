@@ -24,7 +24,8 @@ function getId() {
  * @return {string} feature description
  */
 function getDescription() {
-  return 'Fix the display of the worklog footer';
+  return 'Adjusts the footer element style by removing its background and ' +
+    'preventing it from overlapping the last entry on the page';
 }
 
 /**
