@@ -36,7 +36,8 @@ function getId() {
  * @return {string} feature description
  */
 function getDescription() {
-  return 'Extend the projects time summary page';
+  return 'Extends the projects time summary modal window with the ability ' +
+    'to group entries using regular expressions';
 }
 
 /**

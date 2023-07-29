@@ -11,8 +11,10 @@
     }
   ],
   "action": {
-    "default_popup": "action/index.html",
     "default_title": "Timedone Enhancement Suite"
+  },
+  "options_ui": {
+    "page": "option/index.html"
   },
   "browser_specific_settings": {
     "gecko": {

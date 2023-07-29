@@ -29,7 +29,8 @@ function getId() {
  * @return {string} feature description
  */
 function getDescription() {
-  return 'Enable the expand all button';
+  return 'Adds the "expand/collapse all" button that opens or closes all ' +
+    'entries on the page';
 }
 
 /**

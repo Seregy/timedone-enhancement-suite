@@ -16,7 +16,7 @@ const devtool = 'cheap-source-map';
 const mode = 'production';
 const entry = {
   content: `./${SOURCE_DIRECTORY_NAME}/content-scripts/content-script.js`,
-  action: `./${SOURCE_DIRECTORY_NAME}/action/action.js`,
+  option: `./${SOURCE_DIRECTORY_NAME}/option/options.js`,
 };
 const baseDirPath = _dirname(fileURLToPath(import.meta.url));
 const output = {
@@ -80,7 +80,7 @@ const plugins = [
       },
       {
         from: 'node_modules/uikit/dist/css/uikit.min.css',
-        to: 'action',
+        to: 'option',
       },
       {
         from: 'node_modules/uikit/dist/css/uikit.min.css',
