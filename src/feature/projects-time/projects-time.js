@@ -50,6 +50,15 @@ function isInitialized() {
 }
 
 /**
+ * Returns whether the feature should be enabled by default
+ *
+ * @return {boolean} default enabled status
+ */
+function isEnabledByDefault() {
+  return true;
+}
+
+/**
  * Initializes and enables the feature
  */
 async function initialize() {
@@ -172,7 +181,7 @@ async function modifyProjectsTimeEntries() {
 
   const modificationPromises = [];
   for (const [projectName, logLines] of logLinesByProjectNameSorted) {
-    const projectElement = await htmlHelper.resolveElement(() =>
+    const projectElement = await htmlHelper.resolveElementWithTimeout(() =>
       findWorklogProjectElement(projectName));
     const modificationPromise = modifyProjectTimeDetails(projectElement,
         projectName, logLines);
@@ -347,7 +356,7 @@ function localStringToDate(localStringDate) {
  */
 async function resolveElement(selector) {
   try {
-    return await htmlHelper.resolveElement(() =>
+    return await htmlHelper.resolveElementWithTimeout(() =>
       document.querySelector(selector));
   } catch (error) {
     extensionLogger.info(`Encountered an error on resolving element via 
@@ -363,7 +372,7 @@ async function resolveElement(selector) {
  */
 async function resolveElements(selector) {
   try {
-    return await htmlHelper.resolveElements(() =>
+    return await htmlHelper.resolveElementsWithTimeout(() =>
       document.querySelectorAll(selector));
   } catch (error) {
     extensionLogger.info(`Encountered an error on resolving elements via 
@@ -371,4 +380,5 @@ async function resolveElements(selector) {
   }
 }
 
-export default {getId, getDescription, isInitialized, initialize, deregister};
+export default {getId, getDescription, isInitialized, isEnabledByDefault,
+  initialize, deregister};

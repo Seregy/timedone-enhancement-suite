@@ -36,6 +36,18 @@ export class Feature {
   }
 
   /**
+   * Returns whether the feature should be enabled by default
+   *
+   * Used to determine the feature status if the status hasn't been explicitly
+   *  set by a user
+   *
+   * @return {boolean} default enabled status
+   */
+  isEnabledByDefault() {
+    throw new Error('Not implemented');
+  }
+
+  /**
    * Initializes and enables the feature
    * @return {undefined}
    */

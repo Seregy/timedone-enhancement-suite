@@ -7,8 +7,9 @@ An unofficial browser extension that enhances the Timedone interface. Designed t
 ### Firefox
 
 Download and install the `.xpi` file from the [latest extension release](https://github.com/Seregy/timedone-enhancement-suite/releases/latest/). 
-
 It's signed by Mozilla and will be updated automatically.
+
+Please note that Firefox doesn't grant the necessary permissions to modify the pages' content upon installing the extension. You'll need to either temporarily grant them each time you visit Timedone or assign them once on a permanent basis.
 
 ### Chrome
 
@@ -29,6 +30,8 @@ Adjusts the way the footer element is [displayed on the page](docs/assets/footer
 Fixes the bug with the "Add new entry" modal window not selecting the project by default.
 
 This issue may appear when the web application attempts to load the last created log entry from the storage and fill in the values. The extension attempts to properly pick the last used project if it detects that the selection element is empty.
+
+Disabled by default, consider turning it on if you do experience issues with the project selection.
 
 ### Extended projects time summary
 

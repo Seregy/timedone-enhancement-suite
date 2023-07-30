@@ -1,9 +1,13 @@
-import featureLoader from '../feature/feature-loader.js';
 import browser from 'webextension-polyfill';
+import featureLoader from '../feature/feature-loader.js';
+import featureService from '../helper/feature-service.js';
+import storageService from '../helper/storage-service.js';
+import extensionLogger from '../helper/extension-logger.js';
 
 const requiredPermissions = {
   origins: ['*://timedone.golden-dimension.com/*'],
 };
+const FEATURES_CONTAINER_SELECTOR = '#features';
 
 let permissionsGranted;
 
@@ -27,7 +31,9 @@ function loadSettings() {
     features.forEach((feature) => {
       const featureId = feature.getId();
       const featureCheckbox = document.querySelector('#' + featureId);
-      featureCheckbox.checked = currentSettings[featureId] || false;
+
+      featureCheckbox.checked = featureService.isFeatureEnabled(feature,
+          currentSettings);
     });
   }
 
@@ -36,11 +42,12 @@ function loadSettings() {
    * @param {*} error error to be handled
    */
   function onStorageError(error) {
-    console.log(`Error on retrieving settings from the storage: ${error}`);
+    extensionLogger
+        .info(`Error on retrieving settings from the storage: ${error}`);
   }
 
-  const currentSettings = browser.storage.sync.get();
-  currentSettings.then(applyCurrentValues, onStorageError);
+  const currentSettingsPromise = storageService.getFeatureSettings();
+  currentSettingsPromise.then(applyCurrentValues, onStorageError);
 }
 
 /**
@@ -64,14 +71,14 @@ function saveSettings() {
     settingsToSave[featureId] = featureCheckbox.checked;
   });
 
-  browser.storage.sync.set(settingsToSave);
+  storageService.storeFeatureSettings(settingsToSave);
 }
 
 /**
- * Initializes event listener for the page elements
+ * Builds and adds feature HTML elements to the page
  */
-function initEventListeners() {
-  const featuresContainer = document.querySelector('#features');
+function addFeaturesToThePage() {
+  const featuresContainer = document.querySelector(FEATURES_CONTAINER_SELECTOR);
 
   featureLoader.getFeatures().forEach((feature) => {
     const featureContainer = buildFeatureBlock(feature);
@@ -123,4 +130,4 @@ async function requestMissingPermissions() {
   }
 }
 
-initEventListeners();
+addFeaturesToThePage();
