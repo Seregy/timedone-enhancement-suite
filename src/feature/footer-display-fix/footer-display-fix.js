@@ -38,6 +38,15 @@ function isInitialized() {
 }
 
 /**
+ * Returns whether the feature should be enabled by default
+ *
+ * @return {boolean} default enabled status
+ */
+function isEnabledByDefault() {
+  return true;
+}
+
+/**
  * Initializes and enables the feature
  */
 async function initialize() {
@@ -105,4 +114,5 @@ async function resolveElement(selector) {
   }
 }
 
-export default {getId, getDescription, isInitialized, initialize, deregister};
+export default {getId, getDescription, isInitialized, isEnabledByDefault,
+  initialize, deregister};

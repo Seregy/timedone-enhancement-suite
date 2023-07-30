@@ -1,5 +1,6 @@
-import browser from 'webextension-polyfill';
 import featureLoader from './feature-loader.js';
+import featureService from '../helper/feature-service.js';
+import storageService from '../helper/storage-service.js';
 
 /**
  * @typedef {import('./../feature/feature.js').Feature} Feature
@@ -9,7 +10,7 @@ import featureLoader from './feature-loader.js';
  * Initializes all enabled features
  */
 function initializeFeatures() {
-  const featureSettingsPromise = loadFeatureSettings();
+  const featureSettingsPromise = storageService.getFeatureSettings();
   const features = featureLoader.getFeatures();
 
   const initStatusByFeature = new Map(features.map((feature) =>
@@ -29,15 +30,14 @@ function initializeFeatures() {
  *  with feature IDs as keys and their enabled status as values
  */
 function initializeFeature(feature, isInitialized, settings) {
-  const featureId = feature.getId();
-  const enabledInSettings = settings[featureId];
+  const enabled = featureService.isFeatureEnabled(feature, settings);
 
-  if (enabledInSettings && !isInitialized) {
+  if (enabled && !isInitialized) {
     feature.initialize();
     return;
   }
 
-  if (!enabledInSettings && isInitialized) {
+  if (!enabled && isInitialized) {
     feature.deregister();
   }
 }
@@ -49,15 +49,6 @@ function initializeFeature(feature, isInitialized, settings) {
 function onStorageError(error) {
   console.error(`Encountered an error on retrieving settings from the
    storage: ${error}`);
-}
-
-/**
- * Loads saved feature settings
- * @return {Promise.<Object.<string, boolean>>} promise for current feature
- *  settings object with feature IDs as keys and their enabled status as values
- */
-function loadFeatureSettings() {
-  return browser.storage.sync.get();
 }
 
 export default {initializeFeatures};
