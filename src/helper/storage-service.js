@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 
+const FEATURE_STATUS_STORAGE_AREA = 'sync';
 const FEATURE_STATUS_PREFIX = 'status';
 const FEATURE_DATA_PREFIX = 'data';
 const GLOBAL_DATA_PREFIX = 'global';
@@ -30,6 +31,36 @@ async function storeFeatureSettings(newSettings) {
   };
 
   browser.storage.sync.set(newData);
+}
+
+/**
+ * Function that will be called when the storage content changes
+ *
+ * @callback changeListener
+ */
+
+/**
+ * Adds a listener for the settings change event
+ *
+ * @param {changeListener} listener settings change listener
+ */
+function addFeatureSettingsChangeListener(listener) {
+  /**
+   * Handles generic storage changed events
+   *
+   * Triggers the listener only if the feature settings were actually changed
+   *
+   * @param {object} changes object describing the changes
+   * @param {string} areaName name of the storage area that got changed
+   */
+  function handleStorageChanged(changes, areaName) {
+    if (areaName === FEATURE_STATUS_STORAGE_AREA &&
+        !!changes[FEATURE_STATUS_PREFIX]) {
+      listener();
+    }
+  }
+
+  browser.storage.onChanged.addListener(handleStorageChanged);
 }
 
 /**
@@ -83,5 +114,6 @@ async function getGlobalData(dataKey) {
   return settings[key] || {};
 }
 
-export default {getFeatureSettings, storeFeatureSettings, getFeatureData,
-  storeFeatureData, getGlobalData};
+export default {getFeatureSettings, storeFeatureSettings,
+  addFeatureSettingsChangeListener, getFeatureData, storeFeatureData,
+  getGlobalData};
