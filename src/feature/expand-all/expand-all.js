@@ -72,6 +72,7 @@ async function initialize() {
 async function deregister() {
   const headerCell = await resolveHeaderCell();
   if (!headerCell) {
+    initialized = false;
     return;
   }
 

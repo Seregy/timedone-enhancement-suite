@@ -23,6 +23,35 @@ function initializeFeatures() {
 }
 
 /**
+ * Repeats the initialization of all features
+ *
+ * Deregisters and then initializes enabled features
+ */
+async function reinitializeFeatures() {
+  const features = featureLoader.getFeatures();
+
+  const deregisterPromises = [];
+  features.forEach((feature) => {
+    const promise = deregisterFeature(feature);
+    deregisterPromises.push(promise);
+  });
+
+  await Promise.all(deregisterPromises);
+
+  initializeFeatures();
+}
+
+/**
+ * Initializes all enabled features
+ * @param {Feature} feature to initialize
+ */
+async function deregisterFeature(feature) {
+  if (feature.isInitialized()) {
+    feature.deregister();
+  }
+}
+
+/**
  * Initializes an enabled feature
  * @param {Feature} feature to initialize
  * @param {boolean} isInitialized current feature initialization status
@@ -51,4 +80,4 @@ function onStorageError(error) {
    storage: ${error}`);
 }
 
-export default {initializeFeatures};
+export default {initializeFeatures, reinitializeFeatures};
