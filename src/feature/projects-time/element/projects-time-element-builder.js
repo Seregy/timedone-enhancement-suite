@@ -403,7 +403,8 @@ function timeUnitsToString(timeUnits) {
  */
 function isoDateToString(isoDateString) {
   const dateParts = isoDateString.split('-');
-  const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1], dateParts[2]));
+  const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1,
+      dateParts[2]));
 
   return utcDate.toLocaleDateString('uk-UA');
 }
