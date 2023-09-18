@@ -342,14 +342,14 @@ function buildGroupSummaryContainer(logLines, groupName) {
   const groupSummaryTitleElement = document.createElement('span');
   groupSummaryTitleElement.classList.add(PROJECT_GROUP_TITLE_CLASS);
   const groupTitle = groupName !== null ? groupName : DEFAULT_LOG_GROUP_NAME;
-  groupSummaryTitleElement.innerHTML = groupTitle;
+  groupSummaryTitleElement.textContent = groupTitle;
   groupSummaryContainer.append(groupSummaryTitleElement);
 
   const groupTimeElement = document.createElement('span');
   const totalGroupTimeUnits = logLines.reduce((accumulator, entry) =>
     accumulator + entry.timeUnit, 0);
   const localizedTimeString = timeUnitsToString(totalGroupTimeUnits);
-  groupTimeElement.innerHTML = localizedTimeString;
+  groupTimeElement.textContent = localizedTimeString;
   groupTimeElement.classList.add('uk-text-normal', 'uk-text-default');
 
   groupSummaryContainer.append(groupTimeElement);
@@ -367,14 +367,14 @@ function buildLogLineContainer(logLine) {
   const container = document.createElement('div');
   container.classList.add('uk-flex', 'uk-flex-column', 'uk-margin-small');
   const logDescription = document.createElement('span');
-  logDescription.innerHTML = logLine.description;
+  logDescription.textContent = logLine.description;
   container.append(logDescription);
 
   const logLineDetailsElement = document.createElement('span');
   const logDurationString = timeUnitsToString(logLine.timeUnit);
   const logDateString = isoDateToString(logLine.logDate);
   const logLineDetails = `${logDurationString} | ${logDateString}`;
-  logLineDetailsElement.innerHTML = logLineDetails;
+  logLineDetailsElement.textContent = logLineDetails;
   logLineDetailsElement.classList.add('uk-text-meta');
   container.append(logLineDetailsElement);
 
