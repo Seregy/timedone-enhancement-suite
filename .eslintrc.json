@@ -4,7 +4,8 @@
         "es2021": true
     },
     "extends": [
-        "google"
+        "google",
+        "plugin:no-unsanitized/DOM"
     ],
     "parserOptions": {
         "ecmaVersion": 13,
