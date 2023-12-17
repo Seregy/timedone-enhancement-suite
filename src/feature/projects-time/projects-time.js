@@ -6,23 +6,34 @@ import extensionLogger from '../../helper/extension-logger.js';
 import UIkit from 'uikit';
 import './projects-time.css';
 
-const OVERLAY_MUTATION_OBSERVER = new MutationObserver(
-    () => triggerProjectsTimeModification());
-const BODY_MUTATION_OBSERVER = new MutationObserver(
-    () => triggerProjectsTimeModification());
-
 const PROJECTS_TIME_ELEMENT_SELECTOR = 'app-worklog-projects-time';
 const OVERLAY_CONTAINER_SELECTOR = '.cdk-overlay-container';
+const OVERLAY_MODAL_CONTAINER_CLASS_SELECTOR = 'cdk-overlay-backdrop';
 const CUSTOM_MODAL_CONTAINER_CLASS = 'tes-pt-modal-container';
 const PROJECTS_TIME_MODAL_CONTAINER_SELECTOR = 'mat-dialog-container';
 const DATE_FROM_PICKER_SELECTOR =
-  '#mat-date-range-input-0 input.mat-start-date';
-const DATE_TO_PICKER_SELECTOR = '#mat-date-range-input-0 input.mat-end-date';
+  '[id^=mat-date-range-input-] input.mat-start-date';
+const DATE_TO_PICKER_SELECTOR =
+  '[id^=mat-date-range-input-] input.mat-end-date';
 const WORKLOG_PROJECT_NAME_SELECTOR =
   '.worklog-projects-time__table p:nth-child(odd)';
 const ACCORDION_CLASS = 'uk-accordion';
 const PROJECT_ACCORDION_TITLE_CLASS = 'tes-pt-accordion-title';
 const PROJECT_TITLE_CLASS = 'tes-pt-project-title';
+
+const OVERLAY_MUTATION_OBSERVER = new MutationObserver(
+    (records) => {
+      const modalContainerAdded = records
+          .some((record) => Array.from(record.addedNodes)
+              .some((node) => node.classList && node.classList
+                  .contains(OVERLAY_MODAL_CONTAINER_CLASS_SELECTOR)));
+      if (!modalContainerAdded) {
+        return;
+      }
+      triggerProjectsTimeModification();
+    });
+const BODY_MUTATION_OBSERVER = new MutationObserver(
+    () => triggerProjectsTimeModification());
 
 let initialized = false;
 
@@ -87,15 +98,11 @@ async function deregister() {
  */
 async function enableOverlayObserver() {
   const overlayElement = document.querySelector(OVERLAY_CONTAINER_SELECTOR);
-  if (overlayElement) {
-    OVERLAY_MUTATION_OBSERVER.observe(overlayElement, {childList: true});
+  if (!overlayElement) {
     return;
   }
 
-  extensionLogger.infoFeature(getId(),
-      'No overlay element found, enabling the body observer');
-  BODY_MUTATION_OBSERVER.observe(document.querySelector('body'),
-      {childList: true});
+  OVERLAY_MUTATION_OBSERVER.observe(overlayElement, {childList: true});
 }
 
 /**
