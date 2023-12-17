@@ -75,8 +75,8 @@ async function tryAutoselectProjectIfNoneSelected() {
     projectSelectElement = await htmlHelper.resolveElement(() =>
       document.querySelector(PROJECT_SELECT_ELEMENT_SELECTOR));
   } catch (error) {
-    extensionLogger.info(`Encountered an error on autoselecting a project when
-     resolving selection element: %o`, error);
+    extensionLogger.infoFeature(getId(), `Encountered an error on autoselecting 
+    a project when resolving selection element: %o`, error);
   }
 
   if (!projectSelectElement) {

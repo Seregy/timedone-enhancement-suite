@@ -5,7 +5,7 @@
   "version": "${version}",
   "content_scripts": [
     {
-      "matches": ["*://timedone.golden-dimension.com/*"],
+      "matches": ["*://timedone.gdnext.com/*"],
       "js": ["content/index.js"],
       "css": ["content/content.css", "content/uikit.min.css"]
     }
@@ -23,7 +23,7 @@
   "minimum_chrome_version": "88",
   "permissions": ["storage"],
   "host_permissions": [
-    "*://timedone.golden-dimension.com/*"
+    "*://timedone.gdnext.com/*"
   ],
   "icons": {
     "48": "icon/icon-48.png",

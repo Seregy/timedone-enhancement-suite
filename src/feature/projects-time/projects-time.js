@@ -8,14 +8,18 @@ import './projects-time.css';
 
 const OVERLAY_MUTATION_OBSERVER = new MutationObserver(
     () => triggerProjectsTimeModification());
+const BODY_MUTATION_OBSERVER = new MutationObserver(
+    () => triggerProjectsTimeModification());
 
 const PROJECTS_TIME_ELEMENT_SELECTOR = 'app-worklog-projects-time';
 const OVERLAY_CONTAINER_SELECTOR = '.cdk-overlay-container';
 const CUSTOM_MODAL_CONTAINER_CLASS = 'tes-pt-modal-container';
 const PROJECTS_TIME_MODAL_CONTAINER_SELECTOR = 'mat-dialog-container';
-const DATE_FROM_PICKER_SELECTOR = 'input#dateFrom';
-const DATE_TO_PICKER_SELECTOR = 'input#dateTo';
-const WORKLOG_PROJECT_CLASS = '.worklog-project';
+const DATE_FROM_PICKER_SELECTOR =
+  '#mat-date-range-input-0 input.mat-start-date';
+const DATE_TO_PICKER_SELECTOR = '#mat-date-range-input-0 input.mat-end-date';
+const WORKLOG_PROJECT_NAME_SELECTOR =
+  '.worklog-projects-time__table p:nth-child(odd)';
 const ACCORDION_CLASS = 'uk-accordion';
 const PROJECT_ACCORDION_TITLE_CLASS = 'tes-pt-accordion-title';
 const PROJECT_TITLE_CLASS = 'tes-pt-project-title';
@@ -81,9 +85,17 @@ async function deregister() {
 /**
  * Enables overlay mutation observer
  */
-function enableOverlayObserver() {
+async function enableOverlayObserver() {
   const overlayElement = document.querySelector(OVERLAY_CONTAINER_SELECTOR);
-  OVERLAY_MUTATION_OBSERVER.observe(overlayElement, {childList: true});
+  if (overlayElement) {
+    OVERLAY_MUTATION_OBSERVER.observe(overlayElement, {childList: true});
+    return;
+  }
+
+  extensionLogger.infoFeature(getId(),
+      'No overlay element found, enabling the body observer');
+  BODY_MUTATION_OBSERVER.observe(document.querySelector('body'),
+      {childList: true});
 }
 
 /**
@@ -91,6 +103,7 @@ function enableOverlayObserver() {
  */
 function disableOverlayObserver() {
   OVERLAY_MUTATION_OBSERVER.disconnect();
+  BODY_MUTATION_OBSERVER.disconnect();
 }
 
 /**
@@ -181,10 +194,11 @@ async function modifyProjectsTimeEntries() {
 
   const modificationPromises = [];
   for (const [projectName, logLines] of logLinesByProjectNameSorted) {
-    const projectElement = await htmlHelper.resolveElementWithTimeout(() =>
-      findWorklogProjectElement(projectName));
-    const modificationPromise = modifyProjectTimeDetails(projectElement,
-        projectName, logLines);
+    const [projectTitleElement, projectTimeElement] =
+     await htmlHelper.resolveElementWithTimeout(() =>
+       findWorklogProjectPair(projectName));
+    const modificationPromise = modifyProjectTimeDetails(projectTitleElement,
+        projectTimeElement, projectName, logLines);
     modificationPromises.push(modificationPromise);
   }
 
@@ -297,15 +311,18 @@ function extractGroupingKey(logLine, regex) {
 }
 
 /**
- * Finds a worklog project element by the project name
+ * Finds a worklog project elements pair by the project name
  *
  * @param {string} projectName project name to search the element by
- * @return {HTMLElement | undefined} worklog project element
+ * @return {Array<HTMLElement> | undefined} worklog project elements pair, with
+ *  the first element being a project title and the second one being a project
+ *  time
  */
-function findWorklogProjectElement(projectName) {
-  const matchingElements = document.querySelectorAll(WORKLOG_PROJECT_CLASS);
+function findWorklogProjectPair(projectName) {
+  const matchingElements =
+    document.querySelectorAll(WORKLOG_PROJECT_NAME_SELECTOR);
 
-  const matchingElement = Array.from(matchingElements)
+  const matchingProjectTitle = Array.from(matchingElements)
       .find((element) => {
         if (element.hasChildNodes() &&
           element.firstChild.textContent === projectName) {
@@ -313,22 +330,26 @@ function findWorklogProjectElement(projectName) {
         }
       });
 
-  return matchingElement;
+  return [matchingProjectTitle, matchingProjectTitle.nextElementSibling];
 }
 
 /**
  * Modifies time details element for the provided project
  *
- * @param {HTMLElement} worklogProjectElement original worklog project element
+ * @param {HTMLElement} worklogProjectTitleElement original worklog project
+ *  title element
+ * @param {HTMLElement} worklogProjectTimeElement original worklog project
+ *  time element
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
  */
-async function modifyProjectTimeDetails(worklogProjectElement, projectName,
-    logLines) {
-  const originalProjectsTable = worklogProjectElement.parentElement;
+async function modifyProjectTimeDetails(worklogProjectTitleElement,
+    worklogProjectTimeElement, projectName, logLines) {
+  const originalProjectsTable = worklogProjectTitleElement.parentElement;
   const newProjectContainer =
-    await elementBuilder.buildProjectContainer(getId(), worklogProjectElement,
-        projectName, logLines, groupLogLinesByGroupKey, PROJECT_TITLE_CLASS,
+    await elementBuilder.buildProjectContainer(getId(),
+        worklogProjectTitleElement, worklogProjectTimeElement, projectName,
+        logLines, groupLogLinesByGroupKey, PROJECT_TITLE_CLASS,
         PROJECT_ACCORDION_TITLE_CLASS);
   originalProjectsTable.append(newProjectContainer);
 
@@ -359,8 +380,8 @@ async function resolveElement(selector) {
     return await htmlHelper.resolveElementWithTimeout(() =>
       document.querySelector(selector));
   } catch (error) {
-    extensionLogger.info(`Encountered an error on resolving element via 
-    '${selector}' selector:`, error);
+    extensionLogger.infoFeature(getId(), `Encountered an error on resolving 
+    element via '${selector}' selector:`, error);
   }
 }
 
@@ -375,8 +396,8 @@ async function resolveElements(selector) {
     return await htmlHelper.resolveElementsWithTimeout(() =>
       document.querySelectorAll(selector));
   } catch (error) {
-    extensionLogger.info(`Encountered an error on resolving elements via 
-    '${selector}' selector:`, error);
+    extensionLogger.infoFeature(getId(), `Encountered an error on resolving 
+    elements via '${selector}' selector:`, error);
   }
 }
 

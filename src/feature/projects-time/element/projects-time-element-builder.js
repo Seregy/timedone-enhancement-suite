@@ -35,7 +35,10 @@ const regexTooManyGroupsErrorMessageGenerator = (groupsAmount) =>
  * Builds project container
  *
  * @param {string} featureId unique feature identifier
- * @param {HTMLElement} worklogProjectElement original worklog project element
+ * @param {HTMLElement} worklogProjectTitleElement original worklog project
+ *  title element
+ * @param {HTMLElement} worklogProjectTimeElement original worklog project
+ *  time element
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
  * @param {linesGroupingFunction} groupLogLinesByGroupKey lines grouping
@@ -45,16 +48,17 @@ const regexTooManyGroupsErrorMessageGenerator = (groupsAmount) =>
  *  element CSS class for the project title element
  * @return {Promise<HTMLDivElement>} promise for the project container
  */
-async function buildProjectContainer(featureId, worklogProjectElement,
-    projectName, logLines, groupLogLinesByGroupKey, projectTitleClass,
-    projectAccordionTitleClass) {
+async function buildProjectContainer(featureId, worklogProjectTitleElement,
+    worklogProjectTimeElement, projectName, logLines, groupLogLinesByGroupKey,
+    projectTitleClass, projectAccordionTitleClass) {
   const newProjectContainer = document.createElement('div');
 
   const projectAccordionTitleElement = document.createElement('div');
   projectAccordionTitleElement.classList.add(projectAccordionTitleClass);
   newProjectContainer.append(projectAccordionTitleElement);
-  worklogProjectElement.classList.add(projectTitleClass);
-  projectAccordionTitleElement.append(worklogProjectElement);
+  worklogProjectTitleElement.classList.add(projectTitleClass);
+  projectAccordionTitleElement.append(worklogProjectTitleElement);
+  projectAccordionTitleElement.append(worklogProjectTimeElement);
 
   const projectDetails = document.createElement('div');
   projectDetails.classList.add(ACCORDION_CONTENT_CLASS);

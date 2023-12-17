@@ -23,6 +23,10 @@
   max-height: 90vh !important;
 }
 
+.tes-pt-modal-container .worklog-projects-time__table {
+  grid-template-columns: 1fr !important;
+}
+
 .tes-pt-group-title {
   font-size: 1.1rem;
 }
