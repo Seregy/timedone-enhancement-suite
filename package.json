@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "jwt-decode": "^4.0.0",
+    "typesafe-i18n": "^5.26.2",
     "uikit": "^3.17.11"
   },
   "devDependencies": {
@@ -30,7 +31,7 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "npx typesafe-i18n --no-watch && webpack",
     "lint": "web-ext lint --source-dir dist --self-hosted",
     "package": "web-ext build --source-dir dist --artifacts-dir artifacts --overwrite-dest --filename {name}-{version}-unsigned.zip",
     "sign:amo": "env-cmd --expand-envs --silent web-ext sign --api-key '$AMO_API_KEY' --api-secret '$AMO_API_SECRET' --channel unlisted --timeout 900000 --source-dir dist --artifacts-dir artifacts",
