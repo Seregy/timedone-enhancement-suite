@@ -17,14 +17,6 @@ This extension is available in the [Chrome Web Store](https://chrome.google.com/
 
 ## Features
 
-### Expand all button
-
-Adds a new [expand/collapse all button](docs/assets/expand-collapse.png?raw=1) that opens or closes all group rows on the page in one click.
-
-### Footer display fix
-
-Adjusts the way the footer element is [displayed on the page](docs/assets/footer.png?raw=1) by removing its background and preventing it from overlapping the last entry on the page.
-
 ### Project autoselect bugfix
 
 Fixes the bug with the "Add new entry" modal window not selecting the project by default.
