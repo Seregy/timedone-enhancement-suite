@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 
-const API_PREFIX = 'https://timedone.golden-dimension.com/backend/api';
+const API_PREFIX = 'https://timedone.gdnext.com/backend/api';
 
 /**
  * @typedef LogLine

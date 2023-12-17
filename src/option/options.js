@@ -5,7 +5,7 @@ import storageService from '../helper/storage-service.js';
 import extensionLogger from '../helper/extension-logger.js';
 
 const requiredPermissions = {
-  origins: ['*://timedone.golden-dimension.com/*'],
+  origins: ['*://timedone.gdnext.com/*'],
 };
 const FEATURES_CONTAINER_SELECTOR = '#features';
 
