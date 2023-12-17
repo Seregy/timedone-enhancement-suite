@@ -12,5 +12,6 @@
         "sourceType": "module"
     },
     "rules": {
-    }
+    },
+    "ignorePatterns": ["**/i18n/i18n-util*.js"]
 }

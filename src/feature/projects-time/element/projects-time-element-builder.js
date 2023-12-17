@@ -1,20 +1,12 @@
 import dataStorage from '../data/projects-time-data-storage.js';
 import UIkit from 'uikit';
+import i18nService from '../../../helper/i18n-service.js';
 
 const PROJECT_GROUPS_CONTAINER_ID_PREFIX = 'tes-pt-project-groups-';
 const PROJECT_GROUP_TITLE_CLASS = 'tes-pt-group-title';
 const FORM_ERROR_CLASS = 'uk-form-danger';
 const ACCORDION_CONTENT_CLASS = 'uk-accordion-content';
 const ACCORDION_TITLE_CLASS = 'uk-accordion-title';
-const DEFAULT_LOG_GROUP_NAME = 'Ungrouped';
-const EMPTY_REGEX_PLACEHOLDER = 'Regex';
-const REGEX_INPUT_TOOLTIP = 'Регулярний вираз для групування записів.<br>' +
-  'Має містити рівно одну групу захоплення.';
-const REGEX_INPUT_ERROR_MESSAGE_PREFIX = 'Помилка в регулярному виразі. ';
-const REGEX_MISSING_GROUP_ERROR = 'Вираз має містити групу захоплення';
-const regexTooManyGroupsErrorMessageGenerator = (groupsAmount) =>
-  `Забагато груп захоплення в виразі: реальна кількість - ${groupsAmount}, ` +
-   'очікувана - 1';
 
 /**
  * @typedef {import('./../../../api/api-client.js').LogLine} LogLine
@@ -74,7 +66,9 @@ async function buildProjectContainer(featureId, worklogProjectTitleElement,
   const groupRegexIconElement = document.createElement('button');
   groupRegexIconElement.classList.add('uk-form-icon', 'uk-form-icon-flip');
   groupRegexIconElement.setAttribute('uk-icon', 'icon: info');
-  groupRegexIconElement.setAttribute('uk-tooltip', REGEX_INPUT_TOOLTIP);
+  const regexTooltipValue = i18nService.getLocalizedStrings().feature
+      .projectTimeRegexDescription();
+  groupRegexIconElement.setAttribute('uk-tooltip', regexTooltipValue);
   groupRegexFormContainer.append(groupRegexIconElement);
 
   groupRegexContainer.append(groupRegexFormContainer);
@@ -102,7 +96,8 @@ async function buildRegexInputElement(featureId, projectName,
   const groupRegexElement = document.createElement('input');
   groupRegexElement.classList.add('uk-input', 'uk-form-small',
       'uk-form-width-small');
-  groupRegexElement.placeholder = EMPTY_REGEX_PLACEHOLDER;
+  groupRegexElement.placeholder =
+    i18nService.getLocalizedStrings().feature.projectTimeRegexPlaceholder();
   groupRegexElement.addEventListener('change',
       (changeEvent) => handleProjectRegexChange(featureId, projectName,
           changeEvent, logLines, groupLogLinesByGroupKey));
@@ -194,8 +189,9 @@ function validateRegexValue(regexValue, regexInputElement) {
   const regexError = getInvalidRegexError(regexValue);
 
   if (regexError) {
-    regexInputElement.setCustomValidity(REGEX_INPUT_ERROR_MESSAGE_PREFIX +
-      regexError);
+    const errorMessage = i18nService.getLocalizedStrings().feature
+        .projectTimeRegexErrorPrefix + ' ' + regexError;
+    regexInputElement.setCustomValidity(errorMessage);
     regexInputElement.classList.add(FORM_ERROR_CLASS);
 
     setTimeout(() => {
@@ -261,11 +257,14 @@ function validateRegexGroupsAmount(regexValue) {
   }
 
   if (capturingGroupsAmount === 0) {
-    return new Error(REGEX_MISSING_GROUP_ERROR);
+    const message =
+      i18nService.getLocalizedStrings().feature.projectTimeRegexNoGroupError();
+    return new Error(message);
   }
 
-  const message =
-    regexTooManyGroupsErrorMessageGenerator(capturingGroupsAmount);
+  const message = i18nService.getLocalizedStrings().feature
+      .projectTimeRegexTooManyGroupsError({actual: capturingGroupsAmount,
+        expected: 1});
   return new Error(message);
 }
 
@@ -345,7 +344,9 @@ function buildGroupSummaryContainer(logLines, groupName) {
 
   const groupSummaryTitleElement = document.createElement('span');
   groupSummaryTitleElement.classList.add(PROJECT_GROUP_TITLE_CLASS);
-  const groupTitle = groupName !== null ? groupName : DEFAULT_LOG_GROUP_NAME;
+  const groupTitle = groupName !== null ?
+    groupName :
+    i18nService.getLocalizedStrings().feature.projectTimeDefaultGroupName();
   groupSummaryTitleElement.textContent = groupTitle;
   groupSummaryContainer.append(groupSummaryTitleElement);
 
@@ -396,7 +397,8 @@ function timeUnitsToString(timeUnits) {
   const hours = Math.floor(timeUnits / 2);
   const minutes = timeUnits % 2 * 30;
 
-  return hours + ' год. ' + minutes + ' хв.';
+  return i18nService.getLocalizedStrings().feature.projectTimeDuration(
+      {hours: hours, minutes: minutes});
 }
 
 /**

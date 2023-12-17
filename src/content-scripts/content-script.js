@@ -2,6 +2,7 @@ import featureInitializer from '../feature/feature-initializer.js';
 import UIkit from 'uikit';
 import Icons from 'uikit/dist/js/uikit-icons.js';
 import storageService from '../helper/storage-service.js';
+import i18nService from '../helper/i18n-service.js';
 
 const APP_ROOT_SELECTOR = 'body app-root';
 const APP_ROOT_MUTATION_OBSERVER = new MutationObserver(
@@ -37,6 +38,7 @@ function initWorklogContainerObserver() {
  */
 function initializeExtension() {
   UIkit.use(Icons);
+  i18nService.initialize();
 
   initializeFeatures();
   storageService.addFeatureSettingsChangeListener(initializeFeatures);
