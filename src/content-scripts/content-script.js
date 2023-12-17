@@ -7,19 +7,12 @@ import i18nService from '../helper/i18n-service.js';
 const APP_ROOT_SELECTOR = 'body app-root';
 const APP_ROOT_MUTATION_OBSERVER = new MutationObserver(
     () => initWorklogContainerObserver());
-const WORKLOG_CONTAINER_SELECTOR = 'app-user-dashboard div.router';
-const WORKLOG_CONTAINER_MUTATION_OBSERVER = new MutationObserver(
-    () => initializeFeatures());
 
 /**
  * Initializes all features
  */
 async function initializeFeatures() {
-  disableWorklogContainerObserver();
-
   await featureInitializer.reinitializeFeatures();
-
-  enableWorklogContainerObserver();
 }
 
 /**
@@ -40,7 +33,7 @@ function initializeExtension() {
   UIkit.use(Icons);
   i18nService.initialize();
 
-  initializeFeatures();
+  initWorklogContainerObserver();
   storageService.addFeatureSettingsChangeListener(initializeFeatures);
 }
 
@@ -57,28 +50,6 @@ function enableAppRootObserver() {
  */
 function disableAppRootObserver() {
   APP_ROOT_MUTATION_OBSERVER.disconnect();
-}
-
-/**
- * Enables worklog container mutation observer
- */
-function enableWorklogContainerObserver() {
-  const worklogContainerElement =
-    document.querySelector(WORKLOG_CONTAINER_SELECTOR);
-
-  if (!worklogContainerElement) {
-    return;
-  }
-
-  WORKLOG_CONTAINER_MUTATION_OBSERVER.observe(worklogContainerElement,
-      {childList: true});
-}
-
-/**
- * Disables worklog container mutation observer
- */
-function disableWorklogContainerObserver() {
-  WORKLOG_CONTAINER_MUTATION_OBSERVER.disconnect();
 }
 
 initializeExtension();
