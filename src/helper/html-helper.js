@@ -45,9 +45,11 @@ function resolveElement(elementSupplier) {
  *
  * @param {elementSupplier} elementSupplier provider of the html element to
  * resolve
+ * @param {number} timeoutMs timeout value in milliseconds
  * @return {Promise.<HTMLElement>} promise for the html element
  */
-function resolveElementWithTimeout(elementSupplier) {
+function resolveElementWithTimeout(elementSupplier,
+    timeoutMs = ELEMENT_RESOLUTION_TIMEOUT_MS) {
   return new Promise((resolve, reject) => {
     const element = elementSupplier();
 
@@ -71,7 +73,7 @@ function resolveElementWithTimeout(elementSupplier) {
     const timeout = setTimeout(() => {
       observer.disconnect();
       reject(new ResolutionTimeoutError());
-    }, ELEMENT_RESOLUTION_TIMEOUT_MS);
+    }, timeoutMs);
   });
 }
 

@@ -7,7 +7,7 @@ import UIkit from 'uikit';
 import './projects-time.css';
 
 const PROJECTS_TIME_ELEMENT_SELECTOR = 'app-worklog-projects-time';
-const OVERLAY_CONTAINER_SELECTOR = '.cdk-overlay-container';
+const OVERLAY_CONTAINER_CLASS = 'cdk-overlay-container';
 const OVERLAY_MODAL_CONTAINER_CLASS_SELECTOR = 'cdk-overlay-backdrop';
 const CUSTOM_MODAL_CONTAINER_CLASS = 'tes-pt-modal-container';
 const PROJECTS_TIME_MODAL_CONTAINER_SELECTOR = 'mat-dialog-container';
@@ -33,7 +33,16 @@ const OVERLAY_MUTATION_OBSERVER = new MutationObserver(
       triggerProjectsTimeModification();
     });
 const BODY_MUTATION_OBSERVER = new MutationObserver(
-    () => triggerProjectsTimeModification());
+    (records) => {
+      const modalContainerAdded = records
+          .some((record) => Array.from(record.addedNodes)
+              .some((node) => node.classList && node.classList
+                  .contains(OVERLAY_CONTAINER_CLASS)));
+      if (!modalContainerAdded) {
+        return;
+      }
+      triggerProjectsTimeModification();
+    });
 
 let initialized = false;
 
@@ -77,28 +86,36 @@ function isEnabledByDefault() {
  * Initializes and enables the feature
  */
 async function initialize() {
+  extensionLogger.infoFeature(getId(), 'Start initializing');
   triggerProjectsTimeModification();
 
   initialized = true;
+  extensionLogger.infoFeature(getId(), 'Initialized');
 }
 
 /**
  * Deregisters and disables the feature
  */
 async function deregister() {
+  extensionLogger.infoFeature(getId(), 'Start deregistering');
   disableOverlayObserver();
   removeCustomModalClass();
   restoreProjectsTimeTable();
 
   initialized = false;
+  extensionLogger.infoFeature(getId(), 'Deregistered');
 }
 
 /**
  * Enables overlay mutation observer
  */
 async function enableOverlayObserver() {
-  const overlayElement = document.querySelector(OVERLAY_CONTAINER_SELECTOR);
+  const overlayElement = document.querySelector(`.${OVERLAY_CONTAINER_CLASS}`);
   if (!overlayElement) {
+    extensionLogger.infoFeature(getId(),
+        'No overlay element, observing the body');
+    const bodyElement = document.querySelector('body');
+    BODY_MUTATION_OBSERVER.observe(bodyElement, {childList: true});
     return;
   }
 
@@ -336,6 +353,10 @@ function findWorklogProjectPair(projectName) {
           return element;
         }
       });
+
+  if (!matchingProjectTitle) {
+    return;
+  }
 
   return [matchingProjectTitle, matchingProjectTitle.nextElementSibling];
 }
