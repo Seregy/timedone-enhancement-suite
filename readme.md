@@ -17,14 +17,6 @@ This extension is available in the [Chrome Web Store](https://chrome.google.com/
 
 ## Features
 
-### Project autoselect bugfix
-
-Fixes the bug with the "Add new entry" modal window not selecting the project by default.
-
-This issue may appear when the web application attempts to load the last created log entry from the storage and fill in the values. The extension attempts to properly pick the last used project if it detects that the selection element is empty.
-
-Disabled by default, consider turning it on if you do experience issues with the project selection.
-
 ### Extended projects time summary
 
 Extends the original projects' time summary modal window. Displays individual log entries for each project and allows grouping them by defining a regular expression to extract the group key.
