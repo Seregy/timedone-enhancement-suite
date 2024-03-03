@@ -30,11 +30,23 @@ export type NamespaceFeatureTranslation = {
 	 */
 	projectTimeDefaultGroupName: string
 	/**
+	 * G​r​o​u​p​ ​b​y​:
+	 */
+	projectTimeGroupingTypeTitle: string
+	/**
+	 * t​i​c​k​e​t
+	 */
+	projectTimeTicketGroupingType: string
+	/**
+	 * d​e​s​c​r​i​p​t​i​o​n
+	 */
+	projectTimeDescriptionGroupingType: string
+	/**
 	 * R​e​g​e​x
 	 */
 	projectTimeRegexPlaceholder: string
 	/**
-	 * R​e​g​u​l​a​r​ ​e​x​p​r​e​s​s​i​o​n​ ​f​o​r​ ​g​r​o​u​p​i​n​g​ ​r​e​c​o​r​d​s​.​ ​M​u​s​t​ ​c​o​n​t​a​i​n​ ​e​x​a​c​t​l​y​ ​o​n​e​ ​c​a​p​t​u​r​e​ ​g​r​o​u​p​.
+	 * R​e​g​u​l​a​r​ ​e​x​p​r​e​s​s​i​o​n​ ​f​o​r​ ​g​r​o​u​p​i​n​g​ ​r​e​c​o​r​d​s​ ​b​y​ ​d​e​s​c​r​i​p​t​i​o​n​.​ ​M​u​s​t​ ​c​o​n​t​a​i​n​ ​e​x​a​c​t​l​y​ ​o​n​e​ ​c​a​p​t​u​r​e​ ​g​r​o​u​p​.
 	 */
 	projectTimeRegexDescription: string
 	/**
@@ -75,11 +87,23 @@ export type TranslationFunctions = {
 		 */
 		projectTimeDefaultGroupName: () => LocalizedString
 		/**
+		 * Group by:
+		 */
+		projectTimeGroupingTypeTitle: () => LocalizedString
+		/**
+		 * ticket
+		 */
+		projectTimeTicketGroupingType: () => LocalizedString
+		/**
+		 * description
+		 */
+		projectTimeDescriptionGroupingType: () => LocalizedString
+		/**
 		 * Regex
 		 */
 		projectTimeRegexPlaceholder: () => LocalizedString
 		/**
-		 * Regular expression for grouping records. Must contain exactly one capture group.
+		 * Regular expression for grouping records by description. Must contain exactly one capture group.
 		 */
 		projectTimeRegexDescription: () => LocalizedString
 		/**
