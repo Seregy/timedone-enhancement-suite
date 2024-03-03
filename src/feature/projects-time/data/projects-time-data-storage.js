@@ -1,6 +1,44 @@
 import storageService from '../../../helper/storage-service.js';
 
 const REGEX_DATA_STORAGE_KEY = 'regex';
+const GROUP_TYPE_STORAGE_KEY = 'group-type';
+
+
+/**
+ * Returns the current grouping type for the provided project
+ *
+ * @param {string} featureId unique feature identifier
+ * @param {string} projectName project name to get the grouping type for
+ * @return {Promise<string>} promise for the grouping type value for the
+ *  project, if it exists
+ */
+async function getGroupTypeByProject(featureId, projectName) {
+  const storedGroupTypeData = await storageService.getFeatureData(featureId,
+      GROUP_TYPE_STORAGE_KEY);
+  const projectKey = convertProjectNameToKey(projectName);
+
+  return storedGroupTypeData[projectKey];
+}
+
+/**
+ * Saves a grouping type value for the provided project
+ *
+ * @param {string} featureId unique feature identifier
+ * @param {string} projectName project name to save the grouping type for
+ * @param {string} newGroupingType grouping type value to save
+ */
+async function saveGroupTypeForProject(featureId, projectName,
+    newGroupingType) {
+  const projectKey = convertProjectNameToKey(projectName);
+  const storageKey = GROUP_TYPE_STORAGE_KEY;
+  const storedGroupTypeData = await storageService.getFeatureData(featureId,
+      storageKey);
+
+  storedGroupTypeData[projectKey] = newGroupingType;
+
+  storageService.storeFeatureData(featureId, storageKey,
+      storedGroupTypeData);
+}
 
 /**
  * Returns grouping regex value by the provided project
@@ -45,4 +83,5 @@ function convertProjectNameToKey(projectName) {
   return projectName.replaceAll(' ', '-');
 }
 
-export default {getGroupRegexByProject, saveGroupRegexForProject};
+export default {getGroupTypeByProject, saveGroupTypeForProject,
+  getGroupRegexByProject, saveGroupRegexForProject};

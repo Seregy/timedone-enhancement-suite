@@ -1,8 +1,8 @@
 import apiClient from '../../api/api-client.js';
 import htmlHelper from '../../helper/html-helper.js';
 import elementBuilder from './element/projects-time-element-builder.js';
-import dataStorage from './data/projects-time-data-storage.js';
 import extensionLogger from '../../helper/extension-logger.js';
+import collectionService from './collection-service.js';
 import UIkit from 'uikit';
 import './projects-time.css';
 
@@ -210,7 +210,7 @@ async function restoreProjectsTimeTable() {
 async function modifyProjectsTimeEntries() {
   const logLines = await getLogLineEntries();
 
-  const logLinesByProjectName = groupToMap(logLines,
+  const logLinesByProjectName = collectionService.groupToMap(logLines,
       (logLine) => logLine.userProject.projectName);
   const logLinesByProjectNameSorted = new Map([...logLinesByProjectName]
       .sort((firstEntry, secondEntry) =>
@@ -263,78 +263,6 @@ async function getLogLineEntries() {
  */
 
 /**
- * Groups the array into a map by an extracted key
- *
- * @param {Array<T>} array array to be grouped
- * @param {keyExtractor<T, K>} keyExtractor key extractor
- * @return {Map<K, Array<T>>} grouped map
- * @template T, K
- */
-function groupToMap(array, keyExtractor) {
-  return array.reduce((map, arrayElement) => {
-    const key = keyExtractor(arrayElement);
-    map.get(key)?.push(arrayElement) ?? map.set(key, [arrayElement]);
-    return map;
-  }, new Map());
-}
-
-/**
- * Groups log lines by a grouping key
- *
- * Grouping key is extracted by a regular expression, associated with the
- *  project. Two log line entries will be grouped together if regular expression
- *  matches the same substring in the line description.
- *
- * @param {string} projectName name of the project, associated with the
- * log lines
- * @param {Array<LogLine>} logLines log lines to group
- * @return {Promise<Map<string, Array<LogLine>>>} promise for the log lines
- *  grouped by a grouping key
- */
-async function groupLogLinesByGroupKey(projectName, logLines) {
-  const groupRegexValue = await dataStorage.getGroupRegexByProject(getId(),
-      projectName);
-  const groupRegex = groupRegexValue ? new RegExp(groupRegexValue) : null;
-
-  return groupLogLinesByRegex(logLines, groupRegex);
-}
-
-/**
- * Groups log lines by a regex grouping key
- *
- * @param {Array<LogLine>} logLines log lines to group
- * @param {RegExp} regex regular expression for extracting the grouping key
- * @return {Promise<Map<string, Array<LogLine>>>} promise for the log lines
- *  grouped by a grouping key
- */
-function groupLogLinesByRegex(logLines, regex) {
-  return groupToMap(logLines, (logLine) => extractGroupingKey(logLine, regex));
-}
-
-/**
- * Extracts the grouping key from the log line entry
- *
- * @param {LogLine} logLine log line to extract the group from
- * @param {RegExp} regex regular expression for extracting the grouping key
- * @return {string | null} extracted grouping key or null if it couldn't be
- *  extracted
- */
-function extractGroupingKey(logLine, regex) {
-  if (regex == null) {
-    return null;
-  }
-
-  const description = logLine.description.trim();
-  const matchedResults = regex.exec(description);
-
-  if (matchedResults == null || matchedResults.length < 2) {
-    return null;
-  }
-
-  return matchedResults[1];
-}
-
-/**
  * Finds a worklog project elements pair by the project name
  *
  * @param {string} projectName project name to search the element by
@@ -377,8 +305,7 @@ async function modifyProjectTimeDetails(worklogProjectTitleElement,
   const newProjectContainer =
     await elementBuilder.buildProjectContainer(getId(),
         worklogProjectTitleElement, worklogProjectTimeElement, projectName,
-        logLines, groupLogLinesByGroupKey, PROJECT_TITLE_CLASS,
-        PROJECT_ACCORDION_TITLE_CLASS);
+        logLines, PROJECT_TITLE_CLASS, PROJECT_ACCORDION_TITLE_CLASS);
   originalProjectsTable.append(newProjectContainer);
 
   UIkit.accordion(originalProjectsTable,

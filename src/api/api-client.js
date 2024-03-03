@@ -6,6 +6,7 @@ const API_PREFIX = 'https://timedone.gdnext.com/backend/api';
  * @typedef LogLine
  * @type {object}
  * @property {string} description log line description
+ * @property {string} ticket log line ticket
  * @property {string} logDate log line date in the yyyy-mm-dd format
  * @property {number} timeUnit integer amount of time units,
  *  1 unit is 30 minutes

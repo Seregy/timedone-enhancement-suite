@@ -1,8 +1,10 @@
 import dataStorage from '../data/projects-time-data-storage.js';
 import UIkit from 'uikit';
 import i18nService from '../../../helper/i18n-service.js';
+import groupingService from '../grouping-service.js';
 
 const PROJECT_GROUPS_CONTAINER_ID_PREFIX = 'tes-pt-project-groups-';
+const PROJECT_REGEX_INPUT_ID_PREFIX = 'tes-pt-project-group-regex-';
 const PROJECT_GROUP_TITLE_CLASS = 'tes-pt-group-title';
 const FORM_ERROR_CLASS = 'uk-form-danger';
 const ACCORDION_CONTENT_CLASS = 'uk-accordion-content';
@@ -10,17 +12,6 @@ const ACCORDION_TITLE_CLASS = 'uk-accordion-title';
 
 /**
  * @typedef {import('./../../../api/api-client.js').LogLine} LogLine
- */
-
-/**
- * Function that groups log lines by a grouping key
- *
- * @callback linesGroupingFunction
- * @param {string} projectName name of the project, associated with the
- * log lines
- * @param {Array<LogLine>} logLines log lines to group
- * @return {Promise<Map<string, Array<LogLine>>>} promise for the log lines
- *  grouped by a grouping key
  */
 
 /**
@@ -33,15 +24,13 @@ const ACCORDION_TITLE_CLASS = 'uk-accordion-title';
  *  time element
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
- * @param {linesGroupingFunction} groupLogLinesByGroupKey lines grouping
- *  function
  * @param {string} projectTitleClass name of the project title element CSS class
  * @param {string} projectAccordionTitleClass name of the accordion title
  *  element CSS class for the project title element
  * @return {Promise<HTMLDivElement>} promise for the project container
  */
 async function buildProjectContainer(featureId, worklogProjectTitleElement,
-    worklogProjectTimeElement, projectName, logLines, groupLogLinesByGroupKey,
+    worklogProjectTimeElement, projectName, logLines,
     projectTitleClass, projectAccordionTitleClass) {
   const newProjectContainer = document.createElement('div');
 
@@ -57,11 +46,21 @@ async function buildProjectContainer(featureId, worklogProjectTitleElement,
 
   const groupRegexContainer = document.createElement('div');
   groupRegexContainer.classList.add('uk-flex', 'uk-flex-right');
+
+  const currentGroupingType =
+   await groupingService.getCurrentGroupingType(featureId, projectName);
+  const descriptionGroupingEnabled =
+    currentGroupingType === groupingService.GroupType.DESCRIPTION;
+
+  const groupTypeForm = await buildGroupTypeForm(featureId, projectName,
+      logLines, descriptionGroupingEnabled);
+  groupRegexContainer.append(groupTypeForm);
+
   const groupRegexFormContainer = document.createElement('div');
   groupRegexFormContainer.classList.add('uk-inline', 'uk-margin-small-bottom');
 
   const groupRegexInputElement = await buildRegexInputElement(featureId,
-      projectName, logLines, groupLogLinesByGroupKey);
+      projectName, logLines, descriptionGroupingEnabled);
   groupRegexFormContainer.append(groupRegexInputElement);
   const groupRegexIconElement = document.createElement('button');
   groupRegexIconElement.classList.add('uk-form-icon', 'uk-form-icon-flip');
@@ -74,12 +73,115 @@ async function buildProjectContainer(featureId, worklogProjectTitleElement,
   groupRegexContainer.append(groupRegexFormContainer);
   projectDetails.append(groupRegexContainer);
 
-  const projectGroups = await buildProjectGroupsContainer(projectName,
-      logLines, groupLogLinesByGroupKey);
+  const projectGroups = await buildProjectGroupsContainer(featureId,
+      projectName, logLines);
   projectDetails.append(projectGroups);
   newProjectContainer.append(projectDetails);
 
   return newProjectContainer;
+}
+
+/**
+ * Creates a group type form
+ *
+ * @param {string} featureId unique feature identifier
+ * @param {string} projectName name of the project
+ * @param {Array<LogLine>} logLines log line entries
+ * @param {boolean} descriptionGroupingEnabled indicator whether the
+ *  description grouping is enabled
+ * @return {Promise<HTMLFormElement>} promise for the group type form element
+ */
+async function buildGroupTypeForm(featureId, projectName, logLines,
+    descriptionGroupingEnabled) {
+  const groupTypeForm = document.createElement('form');
+  groupTypeForm.classList.add('uk-margin-small-bottom', 'uk-margin-right');
+
+  const groupTypeContainer = document.createElement('div');
+  groupTypeContainer.classList.add('uk-form-controls', 'uk-form-controls-text');
+  groupTypeForm.append(groupTypeContainer);
+
+  const groupTypeToggleTitle = document.createElement('span');
+  groupTypeToggleTitle.classList.add('uk-form-label');
+  groupTypeToggleTitle.textContent = i18nService.getLocalizedStrings().feature
+      .projectTimeGroupingTypeTitle() + ' ';
+  groupTypeContainer.append(groupTypeToggleTitle);
+
+  const groupTypeTicket = groupingService.GroupType.TICKET;
+  const groupTypeTicketLabel = i18nService.getLocalizedStrings().feature
+      .projectTimeTicketGroupingType();
+  const ticketGroupTypeLabel = buildGroupTypeLabel(groupTypeTicketLabel,
+      groupTypeTicket, !descriptionGroupingEnabled, featureId, projectName,
+      logLines);
+  groupTypeContainer.append(ticketGroupTypeLabel);
+
+  const groupTypeDescriptionLabel = i18nService.getLocalizedStrings().feature
+      .projectTimeDescriptionGroupingType();
+  const groupTypeDescription = groupingService.GroupType.DESCRIPTION;
+  const descriptionGroupTypeLabel = buildGroupTypeLabel(
+      groupTypeDescriptionLabel, groupTypeDescription,
+      descriptionGroupingEnabled, featureId, projectName, logLines);
+  groupTypeContainer.append(descriptionGroupTypeLabel);
+
+  return groupTypeForm;
+}
+
+/**
+ * Creates a group type label
+ *
+ * @param {string} text label text
+ * @param {string} groupType group type value
+ * @param {boolean} enabled indicator whether the type is enabled
+ * @param {string} featureId unique feature identifier
+ * @param {string} projectName name of the project
+ * @param {Array<LogLine>} logLines log line entries
+ * @return {HTMLLabelElement} group type label element
+ */
+function buildGroupTypeLabel(text, groupType, enabled, featureId, projectName,
+    logLines) {
+  const groupTypeLabel = document.createElement('label');
+  groupTypeLabel.classList.add('uk-margin-left');
+  const groupTypeRadio = document.createElement('input');
+  groupTypeRadio.classList.add('uk-radio', 'uk-margin-small-right');
+  groupTypeRadio.type = 'radio';
+  groupTypeRadio.name = 'groupType';
+  groupTypeRadio.value = groupType;
+  groupTypeRadio.checked = enabled;
+  groupTypeRadio.addEventListener('change',
+      (changeEvent) => handleProjectGroupTypeChange(featureId, projectName,
+          changeEvent, logLines));
+  groupTypeLabel.append(groupTypeRadio);
+
+  const groupTypeText = document.createTextNode(text);
+  groupTypeLabel.append(groupTypeText);
+
+  return groupTypeLabel;
+}
+
+/**
+ * Handles the project grouping type value change event
+ *
+ * @param {string} featureId unique feature identifier
+ * @param {string} projectName name of the project, associated with the grouping
+ * @param {Event} event change event
+ * @param {Array<LogLine>} logLines log line entries
+ */
+async function handleProjectGroupTypeChange(featureId, projectName, event,
+    logLines) {
+  const inputElement = event.target;
+  const groupTypeFromUser = inputElement.value;
+
+  const projectElementId = convertProjectNameToElementId(projectName);
+  const elementId = PROJECT_REGEX_INPUT_ID_PREFIX + projectElementId;
+  const groupRegexElement = document.querySelector('#' + elementId);
+  if (groupTypeFromUser === groupingService.GroupType.DESCRIPTION) {
+    groupRegexElement.disabled = false;
+  } else if (groupTypeFromUser === groupingService.GroupType.TICKET) {
+    groupRegexElement.disabled = true;
+  }
+
+  await groupingService.saveCurrentGroupingType(featureId, projectName,
+      groupTypeFromUser);
+  regenerateProjectGroups(featureId, projectName, logLines);
 }
 
 /**
@@ -88,23 +190,28 @@ async function buildProjectContainer(featureId, worklogProjectTitleElement,
  * @param {string} featureId unique feature identifier
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
- * @param {Function} groupLogLinesByGroupKey function
+ * @param {boolean} enabled indicator whether the regex input is enabled
  * @return {Promise<HTMLInputElement>} promise for the regex input element
  */
 async function buildRegexInputElement(featureId, projectName,
-    logLines, groupLogLinesByGroupKey) {
+    logLines, enabled) {
   const groupRegexElement = document.createElement('input');
+  const projectElementId = convertProjectNameToElementId(projectName);
+  groupRegexElement.id = PROJECT_REGEX_INPUT_ID_PREFIX + projectElementId;
   groupRegexElement.classList.add('uk-input', 'uk-form-small',
       'uk-form-width-small');
   groupRegexElement.placeholder =
     i18nService.getLocalizedStrings().feature.projectTimeRegexPlaceholder();
   groupRegexElement.addEventListener('change',
       (changeEvent) => handleProjectRegexChange(featureId, projectName,
-          changeEvent, logLines, groupLogLinesByGroupKey));
+          changeEvent, logLines));
 
   const savedGroupRegex =
     await dataStorage.getGroupRegexByProject(featureId, projectName);
   groupRegexElement.value = savedGroupRegex || '';
+  if (!enabled) {
+    groupRegexElement.disabled = true;
+  }
 
   return groupRegexElement;
 }
@@ -112,20 +219,18 @@ async function buildRegexInputElement(featureId, projectName,
 /**
  * Creates a container with grouped project log entries
  *
+ * @param {string} featureId unique feature identifier
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
- * @param {linesGroupingFunction} groupLogLinesByGroupKey lines grouping
- *  function
  * @return {Promise<HTMLDivElement>} promise for the project groups container
  */
-async function buildProjectGroupsContainer(projectName, logLines,
-    groupLogLinesByGroupKey) {
+async function buildProjectGroupsContainer(featureId, projectName, logLines) {
   const projectGroups = document.createElement('div');
   const projectElementId = convertProjectNameToElementId(projectName);
   projectGroups.id = PROJECT_GROUPS_CONTAINER_ID_PREFIX + projectElementId;
 
-  const groupContainers = await buildProjectGroupContainers(projectName,
-      logLines, groupLogLinesByGroupKey);
+  const groupContainers = await buildProjectGroupContainers(featureId,
+      projectName, logLines);
   projectGroups.append(...groupContainers);
 
   return projectGroups;
@@ -134,17 +239,16 @@ async function buildProjectGroupsContainer(projectName, logLines,
 /**
  * Creates group containers for all log entry groups
  *
+ * @param {string} featureId unique feature identifier
  * @param {string} projectName name of the project
  * @param {Array<LogLine>} logLines log line entries
- * @param {linesGroupingFunction} groupLogLinesByGroupKey lines grouping
- *  function
  * @return {Promise<Array<HTMLDivElement>>} promise for the project group
  *  containers
  */
-async function buildProjectGroupContainers(projectName, logLines,
-    groupLogLinesByGroupKey) {
-  const logLinesByGroupingKey = await groupLogLinesByGroupKey(projectName,
-      logLines);
+async function buildProjectGroupContainers(featureId, projectName, logLines) {
+  const logLinesByGroupingKey =
+    await groupingService.groupLogLinesByGroupKey(featureId, projectName,
+        logLines);
   const logLinesByGroupingKeySorted = new Map([...logLinesByGroupingKey]
       .sort((firstEntry, secondEntry) =>
         String(firstEntry[0]).localeCompare(secondEntry[0])));
@@ -160,10 +264,9 @@ async function buildProjectGroupContainers(projectName, logLines,
  * @param {string} projectName name of the project, associated with the regex
  * @param {Event} event change event
  * @param {Array<LogLine>} logLines log line entries
- * @param {Function} groupLogLinesByGroupKey function
  */
 async function handleProjectRegexChange(featureId, projectName, event,
-    logLines, groupLogLinesByGroupKey) {
+    logLines) {
   const inputElement = event.target;
   const regexFromUser = inputElement.value;
   const validRegex = validateRegexValue(regexFromUser, inputElement);
@@ -173,7 +276,7 @@ async function handleProjectRegexChange(featureId, projectName, event,
 
   await dataStorage.saveGroupRegexForProject(featureId, projectName,
       regexFromUser);
-  regenerateProjectGroups(projectName, logLines, groupLogLinesByGroupKey);
+  await regenerateProjectGroups(featureId, projectName, logLines);
 }
 
 /**
@@ -274,12 +377,11 @@ function validateRegexGroupsAmount(regexValue) {
  * Replaces existing project groups with new ones, designed for usage after
  *  changing the grouping key
  *
+ * @param {string} featureId unique feature identifier
  * @param {string} projectName name of the project, associated with the regex
  * @param {Array<LogLine>} logLines log line entries
- * @param {Function} groupLogLinesByGroupKey function
  */
-async function regenerateProjectGroups(projectName, logLines,
-    groupLogLinesByGroupKey) {
+async function regenerateProjectGroups(featureId, projectName, logLines) {
   const projectElementId = convertProjectNameToElementId(projectName);
   const selector = '#' + PROJECT_GROUPS_CONTAINER_ID_PREFIX + projectElementId;
   const projectGroupsContainer = document.querySelector(selector);
@@ -287,8 +389,8 @@ async function regenerateProjectGroups(projectName, logLines,
     return;
   }
 
-  const projectGroups = await buildProjectGroupContainers(projectName, logLines,
-      groupLogLinesByGroupKey);
+  const projectGroups = await buildProjectGroupContainers(featureId,
+      projectName, logLines);
 
   projectGroupsContainer.replaceChildren(...projectGroups);
 }
