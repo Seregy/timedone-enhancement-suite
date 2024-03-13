@@ -491,13 +491,13 @@ function buildLogLineContainer(logLine) {
 /**
  * Converts time units into human-readable duration
  *
- * @param {number} timeUnits integer amount of work log time units, 1 unit is 30
+ * @param {number} timeUnits integer amount of work log time units, 1 unit is 15
  *  minutes
  * @return {string} localized duration string
  */
 function timeUnitsToString(timeUnits) {
-  const hours = Math.floor(timeUnits / 2);
-  const minutes = timeUnits % 2 * 30;
+  const hours = Math.floor(timeUnits / 4);
+  const minutes = timeUnits % 4 * 15;
 
   return i18nService.getLocalizedStrings().feature.projectTimeDuration(
       {hours: hours, minutes: minutes});
