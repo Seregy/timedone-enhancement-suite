@@ -65,7 +65,7 @@ const plugins = [
         from: `${STATIC_CONTENT_DIRECTORY_NAME}`,
         to: '.',
         globOptions: {
-          ignore: MANIFEST_FILE_NAME,
+          ignore: [MANIFEST_FILE_NAME],
         },
       },
       {
